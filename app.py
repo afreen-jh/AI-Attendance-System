@@ -13,61 +13,122 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# --- Custom Global CSS (Fixes Mismatched Boxes & Colors) ---
+# --- Modern UI / SaaS Glassmorphism CSS ---
 st.markdown("""
     <style>
     /* Main App Background */
     .stApp {
-        background-color: #0B0F19;
-        color: #F9FAFB;
+        background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+        color: #f8fafc;
     }
-    
-    /* Layout Max Width & Padding */
+
+    /* Container Max Width */
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 2.5rem !important;
         padding-bottom: 2rem !important;
-        max-width: 1000px;
+        max-width: 1100px;
     }
 
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: #111827 !important;
-        border-right: 1px solid #1F2937;
+        background-color: rgba(15, 23, 42, 0.75) !important;
+        backdrop-filter: blur(12px);
+        border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
 
-    /* Primary Headers */
-    h1, h2, h3 {
-        color: #38BDF8 !important;
-        font-family: 'Segoe UI', Roboto, sans-serif;
+    /* Header Styling */
+    .main-title {
+        font-size: 2.8rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-align: center;
+        margin-bottom: 0.2rem;
+    }
+    
+    .sub-title {
+        text-align: center;
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin-bottom: 2.5rem;
     }
 
-    /* Cards & Containers */
-    div[data-testid="stForm"], div[data-testid="stExpander"] {
-        border: 1px solid #1F2937 !important;
-        background-color: #111827 !important;
-        border-radius: 12px !important;
+    /* Modern Card Layout */
+    .portal-card {
+        background: rgba(30, 41, 59, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        padding: 2rem;
+        text-align: center;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(16px);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        min-height: 250px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
     }
 
-    /* Camera Input and Select Boxes */
-    div[data-testid="stCameraInput"] {
-        border: 1px solid #1F2937 !important;
-        border-radius: 12px !important;
-        background-color: #111827 !important;
+    .portal-card:hover {
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateY(-5px);
+        box-shadow: 0 25px 30px -5px rgba(99, 102, 241, 0.25);
     }
 
-    /* Buttons */
+    .card-icon {
+        font-size: 3rem;
+        margin-bottom: 0.8rem;
+    }
+
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin-bottom: 0.5rem;
+    }
+
+    .card-desc {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-bottom: 1.5rem;
+    }
+
+    /* Universal Streamlit Buttons Overhaul */
     .stButton > button {
-        background: linear-gradient(135deg, #0EA5E9 0%, #2563EB 100%) !important;
-        color: white !important;
+        background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+        color: #ffffff !important;
         border: none !important;
-        border-radius: 8px !important;
+        border-radius: 12px !important;
         font-weight: 600 !important;
-        padding: 0.5rem 1rem !important;
-        transition: all 0.3s ease !important;
+        font-size: 0.95rem !important;
+        padding: 0.65rem 1.2rem !important;
+        box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.39) !important;
+        transition: all 0.2s ease-in-out !important;
+        width: 100% !important;
     }
+
     .stButton > button:hover {
-        opacity: 0.9;
-        transform: translateY(-1px);
+        transform: scale(1.02) !important;
+        box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.5) !important;
+    }
+
+    /* Camera Input Widget Design */
+    div[data-testid="stCameraInput"] {
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 16px !important;
+        background: rgba(15, 23, 42, 0.6) !important;
+        padding: 10px !important;
+    }
+
+    /* Footer */
+    .footer {
+        text-align: center;
+        color: #64748b;
+        font-size: 0.85rem;
+        margin-top: 4rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.05);
     }
     </style>
 """, unsafe_allow_html=True)
@@ -78,45 +139,66 @@ if "page" not in st.session_state:
 
 # --- Sidebar Navigation ---
 with st.sidebar:
-    st.title("⚡ AttendX AI")
-    st.caption("Facial Recognition Portal")
+    st.markdown("### ⚡ AttendX AI")
+    st.caption("Smart Facial Recognition")
     st.markdown("---")
     
-    if st.button("🏠 Home Portal", use_container_width=True):
+    if st.button("🏠 Home Portal", key="side_home"):
         st.session_state.page = "home"
-    if st.button("🎓 Student Verification", use_container_width=True):
+        st.rerun()
+    st.write("")
+    if st.button("🎓 Student Verification", key="side_student"):
         st.session_state.page = "student"
-    if st.button("👨‍🏫 Teacher Dashboard", use_container_width=True):
+        st.rerun()
+    st.write("")
+    if st.button("👨‍🏫 Teacher Dashboard", key="side_teacher"):
         st.session_state.page = "teacher"
+        st.rerun()
 
 # --- PAGE 1: HOME ---
 if st.session_state.page == "home":
-    st.title("⚡ ATTENDX AI")
-    st.write("Next-Gen Real-Time Facial Recognition Attendance System")
-    st.markdown("---")
+    st.markdown('<div class="main-title">ATTENDX AI</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">Next-Gen Real-Time Facial Recognition Attendance Portal</div>', unsafe_allow_html=True)
 
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns(2, gap="large")
 
     with col1:
-        st.subheader("🎓 Student Portal")
-        st.write("Verify face & mark daily attendance in real-time.")
-        if st.button("Open Student Portal ➔", key="btn_student"):
+        st.markdown("""
+            <div class="portal-card">
+                <div>
+                    <div class="card-icon">🎓</div>
+                    <div class="card-title">Student Portal</div>
+                    <div class="card-desc">Verify face & mark daily attendance effortlessly in real-time.</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.write("")
+        if st.button("Open Student Portal ➔", key="btn_student_home"):
             st.session_state.page = "student"
             st.rerun()
 
     with col2:
-        st.subheader("👨‍🏫 Teacher Portal")
-        st.write("Manage student profiles, analytics & export reports.")
-        if st.button("Open Teacher Portal ➔", key="btn_teacher"):
+        st.markdown("""
+            <div class="portal-card">
+                <div>
+                    <div class="card-icon">👨‍🏫</div>
+                    <div class="card-title">Teacher Portal</div>
+                    <div class="card-desc">Manage student profiles, view analytics & export reports.</div>
+                </div>
+            </div>
+        """, unsafe_allow_html=True)
+        st.write("")
+        if st.button("Open Teacher Portal ➔", key="btn_teacher_home"):
             st.session_state.page = "teacher"
             st.rerun()
 
-    st.markdown("<br><br><center><small>✨ Designed & Developed by Afreen ✨</small></center>", unsafe_allow_html=True)
+    st.markdown('<div class="footer">Designed & Developed with ❤️ by <b>Afreen</b></div>', unsafe_allow_html=True)
 
 # --- PAGE 2: STUDENT VERIFICATION ---
 elif st.session_state.page == "student":
-    st.title("📷 Student Verification & Attendance")
+    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📷 Student Verification</h2>', unsafe_allow_html=True)
     st.write("Select your profile name and take a quick selfie to record attendance.")
+    st.markdown("---")
 
     student_name = st.selectbox(
         "Select Your Profile Name",
@@ -126,15 +208,15 @@ elif st.session_state.page == "student":
     img_file_buffer = st.camera_input("Take photo to verify attendance")
 
     if img_file_buffer is not None:
-        st.success(f"✅ Photo captured successfully for {student_name}!")
+        st.success(f"✅ Photo captured successfully for **{student_name}**!")
         st.info("Verification complete. Attendance recorded.")
 
 # --- PAGE 3: TEACHER DASHBOARD ---
 elif st.session_state.page == "teacher":
-    st.title("📊 Attendance Analytics & Dashboard")
+    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
     st.write("View attendance history and export record files.")
+    st.markdown("---")
 
-    # Sample Data Table
     data = {
         "Student ID": ["STU001", "STU002", "STU003"],
         "Name": ["Afreen", "Saniya", "Farhan"],
