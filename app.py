@@ -25,9 +25,9 @@ st.markdown("""
 
     /* Container Max Width */
     .block-container {
-        padding-top: 2rem !important;
+        padding-top: 3rem !important;
         padding-bottom: 2rem !important;
-        max-width: 1100px;
+        max-width: 1000px;
     }
 
     /* Sidebar Styling */
@@ -39,60 +39,49 @@ st.markdown("""
 
     /* Header Styling */
     .main-title {
-        font-size: 2.8rem;
+        font-size: 3rem;
         font-weight: 800;
         letter-spacing: -0.02em;
         background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        margin-bottom: 0.3rem;
+        margin-bottom: 0.4rem;
     }
     
     .sub-title {
         text-align: center;
         color: #94a3b8;
-        font-size: 1rem;
+        font-size: 1.05rem;
         font-weight: 400;
-        margin-bottom: 2rem;
-    }
-
-    /* Stat Cards */
-    .stat-card {
-        background: rgba(30, 41, 59, 0.4);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 12px;
-        padding: 1rem;
-        text-align: center;
-        backdrop-filter: blur(8px);
-    }
-    .stat-num {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: #38bdf8;
-    }
-    .stat-label {
-        font-size: 0.8rem;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
+        margin-bottom: 3rem;
     }
 
     /* Portal Card Layout */
     .portal-card {
         background: rgba(30, 41, 59, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 16px;
-        padding: 2rem;
+        border-radius: 20px;
+        padding: 2.5rem 2rem;
         text-align: center;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(16px);
-        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .portal-card:hover {
+        border-color: rgba(99, 102, 241, 0.5);
+        transform: translateY(-4px);
+        box-shadow: 0 25px 30px -5px rgba(99, 102, 241, 0.25);
     }
 
     .card-badge {
         display: inline-block;
-        padding: 0.25rem 0.75rem;
+        padding: 0.3rem 0.85rem;
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.3);
         color: #818cf8;
@@ -100,21 +89,21 @@ st.markdown("""
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
-        margin-bottom: 1rem;
+        margin-bottom: 1.2rem;
     }
 
     .card-title {
-        font-size: 1.4rem;
+        font-size: 1.5rem;
         font-weight: 700;
         color: #f8fafc;
-        margin-bottom: 0.6rem;
+        margin-bottom: 0.8rem;
     }
 
     .card-desc {
         color: #94a3b8;
-        font-size: 0.9rem;
-        line-height: 1.5;
-        margin-bottom: 0;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 2rem;
     }
 
     /* Universal Streamlit Buttons & Download Buttons */
@@ -122,10 +111,10 @@ st.markdown("""
         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 10px !important;
+        border-radius: 12px !important;
         font-weight: 600 !important;
-        font-size: 0.9rem !important;
-        padding: 0.6rem 1.2rem !important;
+        font-size: 0.95rem !important;
+        padding: 0.65rem 1.2rem !important;
         box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35) !important;
         transition: all 0.2s ease-in-out !important;
         width: 100% !important;
@@ -139,19 +128,19 @@ st.markdown("""
     /* Camera Input Widget Design */
     div[data-testid="stCameraInput"] {
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 14px !important;
+        border-radius: 16px !important;
         background: rgba(15, 23, 42, 0.6) !important;
-        padding: 8px !important;
+        padding: 10px !important;
     }
 
-    /* Footer Branding (No Emojis) */
+    /* Footer Branding */
     .footer {
         text-align: center;
         color: #64748b;
         font-size: 0.85rem;
         font-weight: 500;
         letter-spacing: 0.02em;
-        margin-top: 4rem;
+        margin-top: 5rem;
         padding-top: 1.5rem;
         border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
@@ -185,27 +174,19 @@ if st.session_state.page == "home":
     st.markdown('<div class="main-title">ATTENDX AI</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-title">Next-Gen Real-Time Facial Recognition Attendance System</div>', unsafe_allow_html=True)
 
-    # Quick Metrics Bar
-    m1, m2, m3 = st.columns(3)
-    with m1:
-        st.markdown('<div class="stat-card"><div class="stat-num">99.4%</div><div class="stat-label">Accuracy Rate</div></div>', unsafe_allow_html=True)
-    with m2:
-        st.markdown('<div class="stat-card"><div class="stat-num">Real-Time</div><div class="stat-label">Recognition Speed</div></div>', unsafe_allow_html=True)
-    with m3:
-        st.markdown('<div class="stat-card"><div class="stat-num">Active</div><div class="stat-label">System Status</div></div>', unsafe_allow_html=True)
-
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2, gap="medium")
+    col1, col2 = st.columns(2, gap="large")
 
     with col1:
         st.markdown("""
             <div class="portal-card">
-                <div class="card-badge">Student Access</div>
-                <div class="card-title">Student Portal</div>
-                <div class="card-desc">Verify face recognition and record daily class attendance in real-time.</div>
+                <div>
+                    <div class="card-badge">Student Access</div>
+                    <div class="card-title">Student Portal</div>
+                    <div class="card-desc">Verify face recognition and record daily class attendance seamlessly in real-time.</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
+        st.write("")
         if st.button("Open Student Portal ➔", key="btn_student_home"):
             st.session_state.page = "student"
             st.rerun()
@@ -213,16 +194,18 @@ if st.session_state.page == "home":
     with col2:
         st.markdown("""
             <div class="portal-card">
-                <div class="card-badge">Faculty Access</div>
-                <div class="card-title">Teacher Portal</div>
-                <div class="card-desc">Manage student profiles, view real-time analytics, and export reports.</div>
+                <div>
+                    <div class="card-badge">Faculty Access</div>
+                    <div class="card-title">Teacher Portal</div>
+                    <div class="card-desc">Manage student profiles, view real-time attendance analytics, and export reports.</div>
+                </div>
             </div>
         """, unsafe_allow_html=True)
+        st.write("")
         if st.button("Open Teacher Portal ➔", key="btn_teacher_home"):
             st.session_state.page = "teacher"
             st.rerun()
 
-    # Footer (Strictly No Emojis)
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
 # --- PAGE 2: STUDENT VERIFICATION ---
@@ -231,7 +214,6 @@ elif st.session_state.page == "student":
     st.write("Select your profile name and capture a selfie to record attendance.")
     st.markdown("---")
 
-    # Updated Names List (Replaced Saniya and Farhan)
     student_name = st.selectbox(
         "Select Your Profile Name",
         ["AFREEN", "RAHUL SHARMA", "PRIYA VERMA", "AMAN KHAN", "GUEST"]
@@ -251,7 +233,6 @@ elif st.session_state.page == "teacher":
     st.write("View attendance history and export system record files.")
     st.markdown("---")
 
-    # Updated Mock Data Table with New Names
     data = {
         "Student ID": ["STU001", "STU002", "STU003", "STU004"],
         "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
