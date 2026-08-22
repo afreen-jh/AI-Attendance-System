@@ -5,14 +5,88 @@ import os
 import numpy as np
 from datetime import datetime
 
-# Streamlit Page Setup
-st.set_page_config(page_title="AI Smart Attendance System", layout="wide", page_icon="🎓")
-st.title("🎓 AI-Based Facial Recognition Attendance System")
+# -------------------------------------------------------------
+# PAGE CONFIG & CUSTOM CSS
+# -------------------------------------------------------------
+st.set_page_config(
+    page_title="AttendX AI - Smart Attendance Portal", 
+    layout="wide", 
+    page_icon="⚡"
+)
+
+# Custom Styling for modern UI cards and theme
+st.markdown("""
+<style>
+    /* Main Background */
+    .stApp {
+        background: linear-gradient(135deg, #4f46e5 0%, #312e81 100%);
+        color: #ffffff;
+    }
+    
+    /* Header Branding */
+    .app-title {
+        text-align: center;
+        font-size: 3rem;
+        font-weight: 800;
+        color: #ffffff;
+        margin-bottom: 5px;
+        letter-spacing: 2px;
+    }
+    .app-subtitle {
+        text-align: center;
+        font-size: 1.1rem;
+        color: #c7d2fe;
+        margin-bottom: 40px;
+    }
+
+    /* Portal Card Boxes */
+    .portal-card {
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 30px;
+        text-align: center;
+        color: #1e293b;
+        box-shadow: 0px 10px 30px rgba(0,0,0,0.25);
+        margin: 10px;
+        transition: transform 0.2s ease;
+    }
+    .portal-card:hover {
+        transform: translateY(-5px);
+    }
+    
+    .portal-icon {
+        font-size: 4rem;
+        margin-bottom: 15px;
+    }
+    
+    .portal-title {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 10px;
+    }
+    
+    .portal-desc {
+        font-size: 0.95rem;
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    /* Footer styling */
+    .footer {
+        text-align: center;
+        color: #cbd5e1;
+        font-size: 0.9rem;
+        margin-top: 50px;
+        padding-top: 20px;
+    }
+</style>
+""", unsafe_allow_html=True)
 
 KNOWN_FACES_DIR = "known_faces"
 ATTENDANCE_FILE = "attendance.csv"
 
-# Ensure folders & files exist
+# Ensure necessary folders & files exist
 if not os.path.exists(KNOWN_FACES_DIR):
     os.makedirs(KNOWN_FACES_DIR)
 
@@ -20,7 +94,7 @@ if not os.path.exists(ATTENDANCE_FILE):
     df = pd.DataFrame(columns=["Name", "Date", "Time", "Status"])
     df.to_csv(ATTENDANCE_FILE, index=False)
 
-# Load student names from photos
+# Load student names
 def load_known_students():
     names = []
     if os.path.exists(KNOWN_FACES_DIR):
@@ -48,35 +122,77 @@ def mark_attendance(name):
     else:
         return False, f"⚠️ {name} - Attendance already recorded today!"
 
-# Sidebar Controls
-st.sidebar.header("⚙️ Dashboard Controls")
-mode = st.sidebar.radio(
-    "Navigation", 
-    ["📹 Live WebCam Attendance", "➕ Register New Student", "📊 Attendance Logs & Analytics"]
-)
+# State navigation variable
+if "portal" not in st.session_state:
+    st.session_state.portal = "home"
 
 # -------------------------------------------------------------
-# MODE 1: LIVE WEBCAM ATTENDANCE
+# LANDING PAGE / ROLE SELECTION
 # -------------------------------------------------------------
-if mode == "📹 Live WebCam Attendance":
-    st.subheader("📹 Real-Time Camera Feed & Verification")
+st.markdown("<h1 class='app-title'>⚡ ATTENDX AI</h1>", unsafe_allow_html=True)
+st.markdown("<p class='app-subtitle'>Next-Gen Real-Time Facial Recognition Attendance Portal</p>", unsafe_allow_html=True)
+
+if st.session_state.portal == "home":
+    col1, col2, col3 = st.columns([1, 4, 1])
     
-    selected_student = st.sidebar.selectbox("Select Student Profile", known_students if known_students else ["No Students Found"])
+    with col2:
+        p_col1, p_col2 = st.columns(2)
+
+        # STUDENT CARD
+        with p_col1:
+            st.markdown("""
+            <div class='portal-card'>
+                <div class='portal-icon'>👨‍🎓</div>
+                <div class='portal-title'>Student Portal</div>
+                <div class='portal-desc'>Verify face & mark daily attendance in real-time</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("Enter Student Portal ↗️", key="btn_student", use_container_width=True):
+                st.session_state.portal = "student"
+                st.rerun()
+
+        # TEACHER CARD
+        with p_col2:
+            st.markdown("""
+            <div class='portal-card'>
+                <div class='portal-icon'>👨‍🏫</div>
+                <div class='portal-title'>Teacher Portal</div>
+                <div class='portal-desc'>Manage student profiles, analytics & export reports</div>
+            </div>
+            """, unsafe_allow_html=True)
+            if st.button("Enter Teacher Portal ↗️", key="btn_teacher", use_container_width=True):
+                st.session_state.portal = "teacher"
+                st.rerun()
+
+    st.markdown("<div class='footer'>✨ Designed & Developed by Afreen ✨</div>", unsafe_allow_html=True)
+
+# -------------------------------------------------------------
+# STUDENT PORTAL
+# -------------------------------------------------------------
+elif st.session_state.portal == "student":
+    if st.sidebar.button("🏠 Back to Home"):
+        st.session_state.portal = "home"
+        st.rerun()
+
+    st.subheader("📹 Student Verification & Attendance")
+    st.write("Select your profile name and take a quick selfie to record attendance.")
+
+    selected_student = st.selectbox("Select Your Profile Name", known_students if known_students else ["No Students Registered"])
     
-    img_file_buffer = st.camera_input("Click 'Take Photo' to verify & mark attendance")
+    img_file_buffer = st.camera_input("Take photo to verify attendance")
 
     if img_file_buffer is not None:
         bytes_data = img_file_buffer.getvalue()
         cv_img = cv2.imdecode(np.frombuffer(bytes_data, np.uint8), cv2.IMREAD_COLOR)
         
-        # Bounding Box overlay
+        # Draw target overlay box
         h, w, _ = cv_img.shape
         cv2.rectangle(cv_img, (int(w*0.25), int(h*0.15)), (int(w*0.75), int(h*0.85)), (0, 255, 0), 3)
         cv2.putText(cv_img, f"Verified: {selected_student}", (int(w*0.25), int(h*0.15) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.9, (0, 255, 0), 2)
         
         st.image(cv2.cvtColor(cv_img, cv2.COLOR_BGR2RGB), caption=f"Captured Image - {selected_student}")
 
-        if selected_student != "No Students Found":
+        if selected_student != "No Students Registered":
             success, msg = mark_attendance(selected_student)
             if success:
                 st.success(msg)
@@ -85,57 +201,59 @@ if mode == "📹 Live WebCam Attendance":
                 st.warning(msg)
 
 # -------------------------------------------------------------
-# MODE 2: REGISTER NEW STUDENT
+# TEACHER PORTAL
 # -------------------------------------------------------------
-elif mode == "➕ Register New Student":
-    st.subheader("➕ Student Registration Form")
-    st.write("Upload a student photo or capture one directly to add them to the system.")
+elif st.session_state.portal == "teacher":
+    if st.sidebar.button("🏠 Back to Home"):
+        st.session_state.portal = "home"
+        st.rerun()
 
-    new_student_name = st.text_input("Enter Student Full Name")
-    uploaded_photo = st.file_uploader("Upload Student Face Image", type=["jpg", "png", "jpeg", "webp"])
+    st.sidebar.header("⚙️ Teacher Controls")
+    teacher_mode = st.sidebar.radio("Section", ["📊 Attendance Logs & Analytics", "➕ Register New Student"])
 
-    if st.button("Save New Student Profile"):
-        if new_student_name and uploaded_photo:
-            file_extension = os.path.splitext(uploaded_photo.name)[1]
-            save_path = os.path.join(KNOWN_FACES_DIR, f"{new_student_name}{file_extension}")
-            
-            with open(save_path, "wb") as f:
-                f.write(uploaded_photo.getbuffer())
-            
-            st.success(f"🎉 Successfully registered student: **{new_student_name}**!")
-            st.rerun()
-        else:
-            st.error("Please provide both a Student Name and a Photo!")
+    if teacher_mode == "📊 Attendance Logs & Analytics":
+        st.subheader("📊 Class Attendance Dashboard")
+        
+        df = pd.read_csv(ATTENDANCE_FILE)
 
-# -------------------------------------------------------------
-# MODE 3: ATTENDANCE LOGS & ANALYTICS
-# -------------------------------------------------------------
-elif mode == "📊 Attendance Logs & Analytics":
-    st.subheader("📊 Attendance Reports & Dashboard Insights")
-    
-    df = pd.read_csv(ATTENDANCE_FILE)
+        col1, col2, col3 = st.columns(3)
+        col1.metric("Total Registered Students", len(known_students))
+        col2.metric("Total Logs Recorded", len(df))
+        col3.metric("System Status", "🟢 Active")
 
-    col1, col2, col3 = st.columns(3)
-    col1.metric("Total Registered Students", len(known_students))
-    col2.metric("Total Attendance Entries", len(df))
-    col3.metric("System Status", "🟢 Active")
+        st.markdown("---")
+        
+        tab1, tab2 = st.tabs(["📋 Detailed Logs", "⚙️ Danger Zone"])
 
-    st.markdown("---")
-    
-    tab1, tab2 = st.tabs(["📜 Log Data", "🗑️ Danger Zone"])
+        with tab1:
+            st.dataframe(df, use_container_width=True)
 
-    with tab1:
-        st.write("### 📋 Attendance Log History")
-        st.dataframe(df, use_container_width=True)
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button("📥 Export Excel / CSV Log", csv, "AttendX_Attendance_Report.csv", "text/csv")
 
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button("📥 Download Excel/CSV Report", csv, "Attendance_Report.csv", "text/csv")
+        with tab2:
+            st.write("### ⚠️ Clear Attendance Database")
+            if st.button("🔴 Reset Attendance Logs"):
+                df_empty = pd.DataFrame(columns=["Name", "Date", "Time", "Status"])
+                df_empty.to_csv(ATTENDANCE_FILE, index=False)
+                st.success("Attendance database has been reset!")
+                st.rerun()
 
-    with tab2:
-        st.write("### ⚠️ Reset Log File")
-        st.write("Clicking this button will wipe all marked attendance data clean.")
-        if st.button("🔴 Clear All Attendance Logs"):
-            df_empty = pd.DataFrame(columns=["Name", "Date", "Time", "Status"])
-            df_empty.to_csv(ATTENDANCE_FILE, index=False)
-            st.success("Attendance logs have been reset!")
-            st.rerun()
+    elif teacher_mode == "➕ Register New Student":
+        st.subheader("➕ Add New Student to Database")
+        
+        new_student_name = st.text_input("Student Full Name")
+        uploaded_photo = st.file_uploader("Upload Student Face Image", type=["jpg", "png", "jpeg", "webp"])
+
+        if st.button("Register Student"):
+            if new_student_name and uploaded_photo:
+                file_extension = os.path.splitext(uploaded_photo.name)[1]
+                save_path = os.path.join(KNOWN_FACES_DIR, f"{new_student_name}{file_extension}")
+                
+                with open(save_path, "wb") as f:
+                    f.write(uploaded_photo.getbuffer())
+                
+                st.success(f"🎉 Registered student **{new_student_name}** successfully!")
+                st.rerun()
+            else:
+                st.error("Please enter a name and upload an image!")
