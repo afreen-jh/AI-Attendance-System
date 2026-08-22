@@ -8,12 +8,12 @@ from datetime import datetime
 # --- Page Configuration ---
 st.set_page_config(
     page_title="AttendX AI - Smart Attendance Portal",
-    page_icon="A",
+    page_icon="⚡",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# --- Corporate Modern CSS (Zero Emojis, Clean Cards) ---
+# --- Modern SaaS UI CSS ---
 st.markdown("""
     <style>
     /* Main App Background */
@@ -78,7 +78,7 @@ st.markdown("""
         letter-spacing: 0.05em;
     }
 
-    /* Modern Card Layout */
+    /* Portal Card Layout */
     .portal-card {
         background: rgba(30, 41, 59, 0.6);
         border: 1px solid rgba(255, 255, 255, 0.1);
@@ -87,14 +87,7 @@ st.markdown("""
         text-align: center;
         box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
         backdrop-filter: blur(16px);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         margin-bottom: 1rem;
-    }
-
-    .portal-card:hover {
-        border-color: rgba(99, 102, 241, 0.5);
-        transform: translateY(-4px);
-        box-shadow: 0 25px 30px -5px rgba(99, 102, 241, 0.25);
     }
 
     .card-badge {
@@ -124,8 +117,8 @@ st.markdown("""
         margin-bottom: 0;
     }
 
-    /* Universal Streamlit Buttons */
-    .stButton > button {
+    /* Universal Streamlit Buttons & Download Buttons */
+    .stButton > button, .stDownloadButton > button {
         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
         color: #ffffff !important;
         border: none !important;
@@ -138,7 +131,7 @@ st.markdown("""
         width: 100% !important;
     }
 
-    .stButton > button:hover {
+    .stButton > button:hover, .stDownloadButton > button:hover {
         transform: scale(1.01) !important;
         box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.5) !important;
     }
@@ -151,7 +144,7 @@ st.markdown("""
         padding: 8px !important;
     }
 
-    /* Clean Corporate Footer */
+    /* Footer Branding (No Emojis) */
     .footer {
         text-align: center;
         color: #64748b;
@@ -169,21 +162,21 @@ st.markdown("""
 if "page" not in st.session_state:
     st.session_state.page = "home"
 
-# --- Sidebar Navigation (No Emojis) ---
+# --- Sidebar Navigation ---
 with st.sidebar:
-    st.markdown("### ATTENDX AI")
+    st.markdown("### ⚡ AttendX AI")
     st.caption("Facial Recognition Management")
     st.markdown("---")
     
-    if st.button("Home Portal", key="side_home"):
+    if st.button("🏠 Home Portal", key="side_home"):
         st.session_state.page = "home"
         st.rerun()
     st.write("")
-    if st.button("Student Verification", key="side_student"):
+    if st.button("📷 Student Verification", key="side_student"):
         st.session_state.page = "student"
         st.rerun()
     st.write("")
-    if st.button("Teacher Dashboard", key="side_teacher"):
+    if st.button("📊 Teacher Dashboard", key="side_teacher"):
         st.session_state.page = "teacher"
         st.rerun()
 
@@ -192,7 +185,7 @@ if st.session_state.page == "home":
     st.markdown('<div class="main-title">ATTENDX AI</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-title">Next-Gen Real-Time Facial Recognition Attendance System</div>', unsafe_allow_html=True)
 
-    # Quick Metrics / Metrics Bar
+    # Quick Metrics Bar
     m1, m2, m3 = st.columns(3)
     with m1:
         st.markdown('<div class="stat-card"><div class="stat-num">99.4%</div><div class="stat-label">Accuracy Rate</div></div>', unsafe_allow_html=True)
@@ -213,7 +206,7 @@ if st.session_state.page == "home":
                 <div class="card-desc">Verify face recognition and record daily class attendance in real-time.</div>
             </div>
         """, unsafe_allow_html=True)
-        if st.button("Open Student Portal →", key="btn_student_home"):
+        if st.button("Open Student Portal ➔", key="btn_student_home"):
             st.session_state.page = "student"
             st.rerun()
 
@@ -225,43 +218,45 @@ if st.session_state.page == "home":
                 <div class="card-desc">Manage student profiles, view real-time analytics, and export reports.</div>
             </div>
         """, unsafe_allow_html=True)
-        if st.button("Open Teacher Portal →", key="btn_teacher_home"):
+        if st.button("Open Teacher Portal ➔", key="btn_teacher_home"):
             st.session_state.page = "teacher"
             st.rerun()
 
-    # Footer
+    # Footer (Strictly No Emojis)
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
 # --- PAGE 2: STUDENT VERIFICATION ---
 elif st.session_state.page == "student":
-    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">Student Verification</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📷 Student Verification</h2>', unsafe_allow_html=True)
     st.write("Select your profile name and capture a selfie to record attendance.")
     st.markdown("---")
 
+    # Updated Names List (Replaced Saniya and Farhan)
     student_name = st.selectbox(
         "Select Your Profile Name",
-        ["AFREEN", "SANIYA", "FARHAN", "GUEST"]
+        ["AFREEN", "RAHUL SHARMA", "PRIYA VERMA", "AMAN KHAN", "GUEST"]
     )
 
     img_file_buffer = st.camera_input("Take photo to verify attendance")
 
     if img_file_buffer is not None:
-        st.success(f"Photo captured successfully for {student_name}.")
+        st.success(f"✅ Photo captured successfully for **{student_name}**!")
         st.info("Verification complete. Attendance recorded.")
 
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
 # --- PAGE 3: TEACHER DASHBOARD ---
 elif st.session_state.page == "teacher":
-    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">Teacher Dashboard</h2>', unsafe_allow_html=True)
+    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
     st.write("View attendance history and export system record files.")
     st.markdown("---")
 
+    # Updated Mock Data Table with New Names
     data = {
-        "Student ID": ["STU001", "STU002", "STU003"],
-        "Name": ["Afreen", "Saniya", "Farhan"],
-        "Time": ["09:00 AM", "09:05 AM", "09:12 AM"],
-        "Status": ["Present", "Present", "Late"]
+        "Student ID": ["STU001", "STU002", "STU003", "STU004"],
+        "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
+        "Time": ["09:00 AM", "09:05 AM", "09:12 AM", "09:15 AM"],
+        "Status": ["Present", "Present", "Late", "Present"]
     }
     df = pd.DataFrame(data)
 
@@ -269,7 +264,7 @@ elif st.session_state.page == "teacher":
 
     csv = df.to_csv(index=False).encode('utf-8')
     st.download_button(
-        label="Export Attendance CSV",
+        label="📥 Export Attendance CSV",
         data=csv,
         file_name='attendance_report.csv',
         mime='text/csv',
