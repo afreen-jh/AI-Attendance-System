@@ -162,7 +162,6 @@ if "page" not in st.session_state:
 if "teacher_logged_in" not in st.session_state:
     st.session_state.teacher_logged_in = False
 
-# Initialize strictly empty live attendance list (No dummy records)
 if "attendance_records" not in st.session_state:
     st.session_state.attendance_records = []
 
@@ -186,56 +185,55 @@ with st.sidebar:
 
 # --- PAGE 1: HOME ---
 if st.session_state.page == "home":
-    st.markdown('<div class="main-title">ATTENDX AI</div>', unsafe_allow_html=True)
-    st.markdown('<div class="sub-title">Next-Gen Real-Time Facial Recognition Attendance System</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">⚡ ATTENDX AI ⚡</div>', unsafe_allow_html=True)
+    st.markdown('<div class="sub-title">✨ Next-Gen Real-Time Facial Recognition Attendance System ✨</div>', unsafe_allow_html=True)
 
     col1, col2 = st.columns(2, gap="large")
 
     with col1:
         st.markdown("""
             <div class="portal-card">
-                <div class="card-badge">Student Access</div>
+                <div class="card-badge">🎓 Student Access</div>
                 <div class="card-title">Student Portal</div>
-                <div class="card-desc">Verify face recognition and record daily class attendance seamlessly in real-time.</div>
+                <div class="card-desc">Verify face recognition and record daily class attendance seamlessly in real-time. 🚀</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
-        if st.button("Open Student Portal ➔", key="btn_student_home"):
+        if st.button("🚀 Open Student Portal ➔", key="btn_student_home"):
             st.session_state.page = "student"
             st.rerun()
 
     with col2:
         st.markdown("""
             <div class="portal-card">
-                <div class="card-badge">Faculty Access</div>
+                <div class="card-badge">🔒 Faculty Access</div>
                 <div class="card-title">Teacher Portal</div>
-                <div class="card-desc">Secure faculty login to manage student profiles, view analytics, and export reports.</div>
+                <div class="card-desc">Secure faculty login to manage student profiles, view live analytics, and export reports. 📈</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
-        if st.button("Open Teacher Portal ➔", key="btn_teacher_home"):
+        if st.button("🔐 Open Teacher Portal ➔", key="btn_teacher_home"):
             st.session_state.page = "teacher"
             st.rerun()
 
-    st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer">✨ Designed & Developed by Afreen ✨</div>', unsafe_allow_html=True)
 
 # --- PAGE 2: STUDENT VERIFICATION ---
 elif st.session_state.page == "student":
-    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📷 Student Verification</h2>', unsafe_allow_html=True)
-    st.write("Enter your full name and capture a selfie to record your live attendance.")
+    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📸 Student Verification Portal</h2>', unsafe_allow_html=True)
+    st.write("✨ Enter your full name and capture your selfie below to record your live attendance instantly! 🎯")
     st.markdown("---")
 
-    student_name_input = st.text_input("Enter Your Full Name", value="", placeholder="e.g. Saadiya")
+    student_name_input = st.text_input("👤 Enter Your Full Name", value="Guest", placeholder="e.g. Guest")
 
-    img_file_buffer = st.camera_input("Take photo to verify attendance")
+    img_file_buffer = st.camera_input("📷 Take photo to verify attendance")
 
     if img_file_buffer is not None:
         if not student_name_input.strip():
-            st.warning("⚠️ Please enter your name before verifying!")
+            st.warning("⚠️ Please type your name before verifying!")
         else:
             final_name = student_name_input.strip().title()
             
-            # Check if name is already recorded in current session
             existing_names = [r["Name"].lower() for r in st.session_state.attendance_records]
             
             if final_name.lower() not in existing_names:
@@ -243,19 +241,18 @@ elif st.session_state.page == "student":
                 current_date = datetime.now().strftime("%Y-%m-%d")
                 current_time = datetime.now().strftime("%I:%M:%S %p")
                 
-                # Append live record with exact current date and time
                 st.session_state.attendance_records.append({
                     "Student ID": new_id,
                     "Name": final_name,
                     "Date": current_date,
                     "Time": current_time,
-                    "Status": "Present"
+                    "Status": "✅ Present"
                 })
                 
-            st.success(f"✅ Photo captured and verified successfully for **{final_name}**!")
-            st.info("Live attendance successfully logged to the teacher's dashboard.")
+            st.success(f"🎉 Photo captured and face verified successfully for **{final_name}**! ✨")
+            st.info("🚀 Live attendance has been securely updated on the teacher's dashboard.")
 
-    st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
+    st.markdown('<div class="footer">✨ Designed & Developed by Afreen ✨</div>', unsafe_allow_html=True)
 
 # --- PAGE 3: TEACHER DASHBOARD (WITH LOGIN GATE) ---
 elif st.session_state.page == "teacher":
@@ -263,9 +260,9 @@ elif st.session_state.page == "teacher":
         col_top1, col_top2 = st.columns([4, 1])
         with col_top1:
             st.markdown('<h2 style="color:#f8fafc; font-weight:700;">🔐 Teacher Portal Login</h2>', unsafe_allow_html=True)
-            st.write("Enter your credentials to access live attendance analytics.")
+            st.write("✨ Enter your administrative credentials to access live attendance analytics. 📊")
         with col_top2:
-            if st.button("← Home"):
+            if st.button("🏠 ← Home"):
                 st.session_state.page = "home"
                 st.rerun()
         
@@ -278,28 +275,28 @@ elif st.session_state.page == "teacher":
             """, unsafe_allow_html=True)
             
             with st.form("teacher_login_form"):
-                username = st.text_input("Username", placeholder="e.g. afreen")
-                password = st.text_input("Password", type="password", placeholder="••••••••")
+                username = st.text_input("👤 Username", placeholder="e.g. afreen")
+                password = st.text_input("🔑 Password", type="password", placeholder="••••••••")
                 st.write("")
-                login_submitted = st.form_submit_button("🔒 Secure Login")
+                login_submitted = st.form_submit_button("🚀 Secure Login")
                 
                 if login_submitted:
                     if username.strip().lower() == "afreen" and password == "admin123":
                         st.session_state.teacher_logged_in = True
-                        st.success("Login successful!")
+                        st.success("🎉 Login successful! Redirecting...")
                         st.rerun()
                     else:
-                        st.error("Invalid credentials. Try username: afreen | password: admin123")
+                        st.error("❌ Invalid credentials! Try username: afreen | password: admin123")
             
             st.markdown("</div>", unsafe_allow_html=True)
                     
-        st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
+        st.markdown('<div class="footer">✨ Designed & Developed by Afreen ✨</div>', unsafe_allow_html=True)
 
     else:
         col_top1, col_top2 = st.columns([4, 1])
         with col_top1:
-            st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
-            st.write("Viewing live real-time verified student attendance records.")
+            st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Live Teacher Dashboard</h2>', unsafe_allow_html=True)
+            st.write("✨ Viewing real-time verified student attendance records and time logs. ⚡")
         with col_top2:
             if st.button("🚪 Logout"):
                 st.session_state.teacher_logged_in = False
@@ -308,17 +305,17 @@ elif st.session_state.page == "teacher":
         st.markdown("---")
 
         if len(st.session_state.attendance_records) == 0:
-            st.info("ℹ️ No student attendance records found yet. Go to **Student Verification**, enter your name, and capture a photo to see live records appear here.")
+            st.info("ℹ️ No live records yet! Go to 📸 **Student Verification**, type a student name (e.g. Guest), and capture a photo to watch real-time entries populate here instantly. ✨")
         else:
             df = pd.DataFrame(st.session_state.attendance_records)
             st.dataframe(df, use_container_width=True, hide_index=True)
 
             csv = df.to_csv(index=False).encode('utf-8')
             st.download_button(
-                label="📥 Export Attendance CSV",
+                label="📥 Export Live Attendance CSV 📊",
                 data=csv,
                 file_name=f'attendance_report_{datetime.now().strftime("%Y-%m-%d")}.csv',
                 mime='text/csv',
             )
 
-        st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
+        st.markdown('<div class="footer">✨ Designed & Developed by Afreen ✨</div>', unsafe_allow_html=True)
