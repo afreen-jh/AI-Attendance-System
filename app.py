@@ -150,6 +150,8 @@ st.markdown("""
 # --- Session State Management ---
 if "page" not in st.session_state:
     st.session_state.page = "home"
+if "teacher_logged_in" not in st.session_state:
+    st.session_state.teacher_logged_in = False
 
 # --- Sidebar Navigation ---
 with st.sidebar:
@@ -197,7 +199,7 @@ if st.session_state.page == "home":
                 <div>
                     <div class="card-badge">Faculty Access</div>
                     <div class="card-title">Teacher Portal</div>
-                    <div class="card-desc">Manage student profiles, view real-time attendance analytics, and export reports.</div>
+                    <div class="card-desc">Secure faculty login to manage student profiles, view analytics, and export reports.</div>
                 </div>
             </div>
         """, unsafe_allow_html=True)
@@ -227,28 +229,65 @@ elif st.session_state.page == "student":
 
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
-# --- PAGE 3: TEACHER DASHBOARD ---
+# --- PAGE 3: TEACHER DASHBOARD (WITH LOGIN GATE) ---
 elif st.session_state.page == "teacher":
-    st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
-    st.write("View attendance history and export system record files.")
-    st.markdown("---")
+    if not st.session_state.teacher_logged_in:
+        col_top1, col_top2 = st.columns([4, 1])
+        with col_top1:
+            st.markdown('<h2 style="color:#f8fafc; font-weight:700;">🔐 Teacher Portal Login</h2>', unsafe_allow_html=True)
+            st.write("Enter your credentials to access the analytics and records dashboard.")
+        with col_top2:
+            if st.button("← Back to Home"):
+                st.session_state.page = "home"
+                st.rerun()
+        
+        st.markdown("---")
+        
+        with st.form("teacher_login_form"):
+            username = st.text_input("Enter username", placeholder="e.g. afreen")
+            password = st.text_input("Enter password", type="password", placeholder="••••••••")
+            
+            login_submitted = st.form_submit_button("🔒 Login to Dashboard")
+            
+            if login_submitted:
+                # Default demo credentials: username 'afreen' and password 'admin123' (change as needed)
+                if username.strip().lower() == "afreen" and password == "admin123":
+                    st.session_state.teacher_logged_in = True
+                    st.success("Login successful! Redirecting...")
+                    st.rerun()
+                else:
+                    st.error("Invalid username or password. Try username: afreen | password: admin123")
+                    
+        st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
-    data = {
-        "Student ID": ["STU001", "STU002", "STU003", "STU004"],
-        "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
-        "Time": ["09:00 AM", "09:05 AM", "09:50 AM", "09:15 AM"],
-        "Status": ["Present", "Present", "Late", "Present"]
-    }
-    df = pd.DataFrame(data)
+    else:
+        col_top1, col_top2 = st.columns([4, 1])
+        with col_top1:
+            st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
+            st.write("View attendance history and export system record files.")
+        with col_top2:
+            if st.button("🚪 Logout"):
+                st.session_state.teacher_logged_in = False
+                st.rerun()
+                
+        st.markdown("---")
 
-    st.dataframe(df, use_container_width=True)
+        data = {
+            "Student ID": ["STU001", "STU002", "STU003", "STU004"],
+            "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
+            "Time": ["09:00 AM", "09:05 AM", "09:50 AM", "09:15 AM"],
+            "Status": ["Present", "Present", "Late", "Present"]
+        }
+        df = pd.DataFrame(data)
 
-    csv = df.to_csv(index=False).encode('utf-8')
-    st.download_button(
-        label="📥 Export Attendance CSV",
-        data=csv,
-        file_name='attendance_report.csv',
-        mime='text/csv',
-    )
+        st.dataframe(df, use_container_width=True)
 
-    st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
+        csv = df.to_csv(index=False).encode('utf-8')
+        st.download_button(
+            label="📥 Export Attendance CSV",
+            data=csv,
+            file_name='attendance_report.csv',
+            mime='text/csv',
+        )
+
+        st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
