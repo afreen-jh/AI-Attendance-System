@@ -236,7 +236,7 @@ elif st.session_state.page == "teacher":
     data = {
         "Student ID": ["STU001", "STU002", "STU003", "STU004"],
         "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
-        "Time": ["09:00 AM", "09:05 AM", "09:12 AM", "09:15 AM"],
+        "Time": ["09:00 AM", "09:05 AM", "09:50 AM", "09:15 AM"],
         "Status": ["Present", "Present", "Late", "Present"]
     }
     df = pd.DataFrame(data)
