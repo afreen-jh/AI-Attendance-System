@@ -25,6 +25,14 @@ Experience the application live on Streamlit Cloud:
 
 ---
 
+## 🔄 How It Works
+
+1. **Access Portal:** Users land on the main SaaS-styled home page and choose between the **Student** or **Teacher** portal.
+2. **Student Check-In:** Students enter their name (defaulting to Guest), look into their camera, and click to verify their attendance via selfie capture.
+3. **Faculty Monitoring:** Teachers log into the secure dashboard using admin credentials to view live attendance logs and download CSV reports.
+
+---
+
 ## 🛠️ Tech Stack
 
 * **Frontend & Backend:** Python, Streamlit
