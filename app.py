@@ -3,7 +3,7 @@ import cv2
 import numpy as np
 import pandas as pd
 import os
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -238,8 +238,19 @@ elif st.session_state.page == "student":
             
             if final_name.lower() not in existing_names:
                 new_id = f"STU00{len(st.session_state.attendance_records) + 1}"
-                current_date = datetime.now().strftime("%Y-%m-%d")
-                current_time = datetime.now().strftime("%I:%M:%S %p")
+                
+                # Automatically extract client browser local timezone offset if available via st.context
+                try:
+                    tzoff = st.context.timezone_offset
+                    local_tz = timezone(-timedelta(minutes=tzoff))
+                    current_dt = datetime.now(local_tz)
+                except Exception:
+                    # Fallback to IST (UTC +5:30) or system local time
+                    ist_offset = timezone(timedelta(hours=5, minutes=30))
+                    current_dt = datetime.now(ist_offset)
+
+                current_date = current_dt.strftime("%Y-%m-%d")
+                current_time = current_dt.strftime("%I:%M:%S %p")
                 
                 st.session_state.attendance_records.append({
                     "Student ID": new_id,
