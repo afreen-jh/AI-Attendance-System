@@ -156,20 +156,15 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# --- Session State Management for Persistence ---
+# --- Session State Management ---
 if "page" not in st.session_state:
     st.session_state.page = "home"
 if "teacher_logged_in" not in st.session_state:
     st.session_state.teacher_logged_in = False
 
-# Initialize dynamic attendance records list in session state
+# Initialize strictly empty live attendance list (No dummy records)
 if "attendance_records" not in st.session_state:
-    st.session_state.attendance_records = [
-        {"Student ID": "STU001", "Name": "Afreen", "Time": "09:00 AM", "Status": "Present"},
-        {"Student ID": "STU002", "Name": "Rahul Sharma", "Time": "09:05 AM", "Status": "Present"},
-        {"Student ID": "STU003", "Name": "Priya Verma", "Time": "09:50 AM", "Status": "Late"},
-        {"Student ID": "STU004", "Name": "Aman Khan", "Time": "09:15 AM", "Status": "Present"}
-    ]
+    st.session_state.attendance_records = []
 
 # --- Sidebar Navigation ---
 with st.sidebar:
@@ -227,33 +222,38 @@ if st.session_state.page == "home":
 # --- PAGE 2: STUDENT VERIFICATION ---
 elif st.session_state.page == "student":
     st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📷 Student Verification</h2>', unsafe_allow_html=True)
-    st.write("Enter your full name and capture a selfie to record your attendance.")
+    st.write("Enter your full name and capture a selfie to record your live attendance.")
     st.markdown("---")
 
-    # Dynamic Student Name Input (Default: GUEST)
-    student_name_input = st.text_input("Enter Your Full Name", value="GUEST", placeholder="e.g. John Doe")
+    student_name_input = st.text_input("Enter Your Full Name", value="", placeholder="e.g. Saadiya")
 
     img_file_buffer = st.camera_input("Take photo to verify attendance")
 
     if img_file_buffer is not None:
-        final_name = student_name_input.strip() if student_name_input.strip() else "GUEST"
-        
-        # Check if student already verified in this session to avoid duplicates
-        existing_names = [r["Name"].lower() for r in st.session_state.attendance_records]
-        if final_name.lower() not in existing_names:
-            new_id = f"STU00{len(st.session_state.attendance_records) + 1}"
-            current_time_str = datetime.now().strftime("%I:%M %p")
+        if not student_name_input.strip():
+            st.warning("⚠️ Please enter your name before verifying!")
+        else:
+            final_name = student_name_input.strip().title()
             
-            # Append new record dynamically
-            st.session_state.attendance_records.append({
-                "Student ID": new_id,
-                "Name": final_name.title(),
-                "Time": current_time_str,
-                "Status": "Present"
-            })
+            # Check if name is already recorded in current session
+            existing_names = [r["Name"].lower() for r in st.session_state.attendance_records]
             
-        st.success(f"✅ Photo captured and verified successfully for **{final_name.title()}**!")
-        st.info("Attendance successfully recorded to the teacher's portal database.")
+            if final_name.lower() not in existing_names:
+                new_id = f"STU00{len(st.session_state.attendance_records) + 1}"
+                current_date = datetime.now().strftime("%Y-%m-%d")
+                current_time = datetime.now().strftime("%I:%M:%S %p")
+                
+                # Append live record with exact current date and time
+                st.session_state.attendance_records.append({
+                    "Student ID": new_id,
+                    "Name": final_name,
+                    "Date": current_date,
+                    "Time": current_time,
+                    "Status": "Present"
+                })
+                
+            st.success(f"✅ Photo captured and verified successfully for **{final_name}**!")
+            st.info("Live attendance successfully logged to the teacher's dashboard.")
 
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
@@ -263,7 +263,7 @@ elif st.session_state.page == "teacher":
         col_top1, col_top2 = st.columns([4, 1])
         with col_top1:
             st.markdown('<h2 style="color:#f8fafc; font-weight:700;">🔐 Teacher Portal Login</h2>', unsafe_allow_html=True)
-            st.write("Enter your credentials to access the analytics and records dashboard.")
+            st.write("Enter your credentials to access live attendance analytics.")
         with col_top2:
             if st.button("← Home"):
                 st.session_state.page = "home"
@@ -299,7 +299,7 @@ elif st.session_state.page == "teacher":
         col_top1, col_top2 = st.columns([4, 1])
         with col_top1:
             st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
-            st.write("View live verified student attendance records and export files.")
+            st.write("Viewing live real-time verified student attendance records.")
         with col_top2:
             if st.button("🚪 Logout"):
                 st.session_state.teacher_logged_in = False
@@ -307,18 +307,18 @@ elif st.session_state.page == "teacher":
                 
         st.markdown("---")
 
-        # Convert session records list to DataFrame
-        df = pd.DataFrame(st.session_state.attendance_records)
+        if len(st.session_state.attendance_records) == 0:
+            st.info("ℹ️ No student attendance records found yet. Go to **Student Verification**, enter your name, and capture a photo to see live records appear here.")
+        else:
+            df = pd.DataFrame(st.session_state.attendance_records)
+            st.dataframe(df, use_container_width=True, hide_index=True)
 
-        # Display clean dataframe without index
-        st.dataframe(df, use_container_width=True, hide_index=True)
-
-        csv = df.to_csv(index=False).encode('utf-8')
-        st.download_button(
-            label="📥 Export Attendance CSV",
-            data=csv,
-            file_name='attendance_report.csv',
-            mime='text/csv',
-        )
+            csv = df.to_csv(index=False).encode('utf-8')
+            st.download_button(
+                label="📥 Export Attendance CSV",
+                data=csv,
+                file_name=f'attendance_report_{datetime.now().strftime("%Y-%m-%d")}.csv',
+                mime='text/csv',
+            )
 
         st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
