@@ -18,82 +18,81 @@ st.markdown("""
     <style>
     /* Main App Background */
     .stApp {
-        background: radial-gradient(circle at 50% 10%, #1e1b4b 0%, #0f172a 60%, #020617 100%);
+        background: radial-gradient(circle at 20% 20%, #31104a 0%, #0f172a 50%, #020617 100%);
         color: #f8fafc;
         font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
 
     /* Container Max Width */
     .block-container {
-        padding-top: 3rem !important;
+        padding-top: 3.5rem !important;
         padding-bottom: 2rem !important;
-        max-width: 1000px;
+        max-width: 1050px;
     }
 
     /* Sidebar Styling */
     section[data-testid="stSidebar"] {
-        background-color: rgba(15, 23, 42, 0.85) !important;
-        backdrop-filter: blur(12px);
+        background-color: rgba(15, 23, 42, 0.9) !important;
+        backdrop-filter: blur(16px);
         border-right: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     /* Header Styling */
     .main-title {
-        font-size: 3rem;
+        font-size: 3.2rem;
         font-weight: 800;
-        letter-spacing: -0.02em;
-        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #c084fc 100%);
+        letter-spacing: -0.03em;
+        background: linear-gradient(135deg, #38bdf8 0%, #818cf8 50%, #e879f9 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         text-align: center;
-        margin-bottom: 0.4rem;
+        margin-bottom: 0.3rem;
     }
     
     .sub-title {
         text-align: center;
         color: #94a3b8;
-        font-size: 1.05rem;
+        font-size: 1.1rem;
         font-weight: 400;
-        margin-bottom: 3rem;
+        margin-bottom: 3.5rem;
     }
 
     /* Portal Card Layout */
     .portal-card {
-        background: rgba(30, 41, 59, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 20px;
-        padding: 2.5rem 2rem;
+        background: rgba(30, 41, 59, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 24px;
+        padding: 2.8rem 2.2rem;
         text-align: center;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-        backdrop-filter: blur(16px);
-        transition: all 0.3s ease;
+        box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(20px);
+        transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
         height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
     }
 
     .portal-card:hover {
-        border-color: rgba(99, 102, 241, 0.5);
-        transform: translateY(-4px);
-        box-shadow: 0 25px 30px -5px rgba(99, 102, 241, 0.25);
+        border-color: rgba(129, 140, 248, 0.4);
+        transform: translateY(-6px);
+        box-shadow: 0 30px 60px -15px rgba(99, 102, 241, 0.3);
+        background: rgba(30, 41, 59, 0.65);
     }
 
     .card-badge {
         display: inline-block;
-        padding: 0.3rem 0.85rem;
+        padding: 0.35rem 1rem;
         background: rgba(99, 102, 241, 0.15);
         border: 1px solid rgba(99, 102, 241, 0.3);
-        color: #818cf8;
+        color: #a5b4fc;
         border-radius: 9999px;
         font-size: 0.75rem;
         font-weight: 600;
         text-transform: uppercase;
+        letter-spacing: 0.05em;
         margin-bottom: 1.2rem;
     }
 
     .card-title {
-        font-size: 1.5rem;
+        font-size: 1.6rem;
         font-weight: 700;
         color: #f8fafc;
         margin-bottom: 0.8rem;
@@ -111,26 +110,36 @@ st.markdown("""
         background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
         color: #ffffff !important;
         border: none !important;
-        border-radius: 12px !important;
+        border-radius: 14px !important;
         font-weight: 600 !important;
         font-size: 0.95rem !important;
-        padding: 0.65rem 1.2rem !important;
-        box-shadow: 0 4px 14px 0 rgba(99, 102, 241, 0.35) !important;
-        transition: all 0.2s ease-in-out !important;
+        padding: 0.7rem 1.4rem !important;
+        box-shadow: 0 8px 20px -4px rgba(99, 102, 241, 0.5) !important;
+        transition: all 0.25s ease-in-out !important;
         width: 100% !important;
     }
 
     .stButton > button:hover, .stDownloadButton > button:hover {
-        transform: scale(1.01) !important;
-        box-shadow: 0 6px 20px 0 rgba(99, 102, 241, 0.5) !important;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 12px 25px -4px rgba(99, 102, 241, 0.7) !important;
+        background: linear-gradient(135deg, #818cf8 0%, #6366f1 100%) !important;
+    }
+
+    /* Inputs Styling */
+    .stTextInput > div > div > input, .stSelectbox > div > div {
+        background-color: rgba(15, 23, 42, 0.6) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 12px !important;
+        color: #f8fafc !important;
     }
 
     /* Camera Input Widget Design */
     div[data-testid="stCameraInput"] {
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
-        border-radius: 16px !important;
+        border-radius: 20px !important;
         background: rgba(15, 23, 42, 0.6) !important;
-        padding: 10px !important;
+        padding: 12px !important;
+        box-shadow: 0 15px 30px rgba(0,0,0,0.4);
     }
 
     /* Footer Branding */
@@ -139,19 +148,28 @@ st.markdown("""
         color: #64748b;
         font-size: 0.85rem;
         font-weight: 500;
-        letter-spacing: 0.02em;
-        margin-top: 5rem;
+        letter-spacing: 0.03em;
+        margin-top: 6rem;
         padding-top: 1.5rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        border-top: 1px solid rgba(255, 255, 255, 0.06);
     }
     </style>
 """, unsafe_allow_html=True)
 
-# --- Session State Management ---
+# --- Session State Management for Persistence ---
 if "page" not in st.session_state:
     st.session_state.page = "home"
 if "teacher_logged_in" not in st.session_state:
     st.session_state.teacher_logged_in = False
+
+# Initialize dynamic attendance records list in session state
+if "attendance_records" not in st.session_state:
+    st.session_state.attendance_records = [
+        {"Student ID": "STU001", "Name": "Afreen", "Time": "09:00 AM", "Status": "Present"},
+        {"Student ID": "STU002", "Name": "Rahul Sharma", "Time": "09:05 AM", "Status": "Present"},
+        {"Student ID": "STU003", "Name": "Priya Verma", "Time": "09:50 AM", "Status": "Late"},
+        {"Student ID": "STU004", "Name": "Aman Khan", "Time": "09:15 AM", "Status": "Present"}
+    ]
 
 # --- Sidebar Navigation ---
 with st.sidebar:
@@ -181,11 +199,9 @@ if st.session_state.page == "home":
     with col1:
         st.markdown("""
             <div class="portal-card">
-                <div>
-                    <div class="card-badge">Student Access</div>
-                    <div class="card-title">Student Portal</div>
-                    <div class="card-desc">Verify face recognition and record daily class attendance seamlessly in real-time.</div>
-                </div>
+                <div class="card-badge">Student Access</div>
+                <div class="card-title">Student Portal</div>
+                <div class="card-desc">Verify face recognition and record daily class attendance seamlessly in real-time.</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
@@ -196,11 +212,9 @@ if st.session_state.page == "home":
     with col2:
         st.markdown("""
             <div class="portal-card">
-                <div>
-                    <div class="card-badge">Faculty Access</div>
-                    <div class="card-title">Teacher Portal</div>
-                    <div class="card-desc">Secure faculty login to manage student profiles, view analytics, and export reports.</div>
-                </div>
+                <div class="card-badge">Faculty Access</div>
+                <div class="card-title">Teacher Portal</div>
+                <div class="card-desc">Secure faculty login to manage student profiles, view analytics, and export reports.</div>
             </div>
         """, unsafe_allow_html=True)
         st.write("")
@@ -213,19 +227,33 @@ if st.session_state.page == "home":
 # --- PAGE 2: STUDENT VERIFICATION ---
 elif st.session_state.page == "student":
     st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📷 Student Verification</h2>', unsafe_allow_html=True)
-    st.write("Select your profile name and capture a selfie to record attendance.")
+    st.write("Enter your full name and capture a selfie to record your attendance.")
     st.markdown("---")
 
-    student_name = st.selectbox(
-        "Select Your Profile Name",
-        ["AFREEN", "RAHUL SHARMA", "PRIYA VERMA", "AMAN KHAN", "GUEST"]
-    )
+    # Dynamic Student Name Input (Default: GUEST)
+    student_name_input = st.text_input("Enter Your Full Name", value="GUEST", placeholder="e.g. John Doe")
 
     img_file_buffer = st.camera_input("Take photo to verify attendance")
 
     if img_file_buffer is not None:
-        st.success(f"✅ Photo captured successfully for **{student_name}**!")
-        st.info("Verification complete. Attendance recorded.")
+        final_name = student_name_input.strip() if student_name_input.strip() else "GUEST"
+        
+        # Check if student already verified in this session to avoid duplicates
+        existing_names = [r["Name"].lower() for r in st.session_state.attendance_records]
+        if final_name.lower() not in existing_names:
+            new_id = f"STU00{len(st.session_state.attendance_records) + 1}"
+            current_time_str = datetime.now().strftime("%I:%M %p")
+            
+            # Append new record dynamically
+            st.session_state.attendance_records.append({
+                "Student ID": new_id,
+                "Name": final_name.title(),
+                "Time": current_time_str,
+                "Status": "Present"
+            })
+            
+        st.success(f"✅ Photo captured and verified successfully for **{final_name.title()}**!")
+        st.info("Attendance successfully recorded to the teacher's portal database.")
 
     st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
@@ -237,26 +265,33 @@ elif st.session_state.page == "teacher":
             st.markdown('<h2 style="color:#f8fafc; font-weight:700;">🔐 Teacher Portal Login</h2>', unsafe_allow_html=True)
             st.write("Enter your credentials to access the analytics and records dashboard.")
         with col_top2:
-            if st.button("← Back to Home"):
+            if st.button("← Home"):
                 st.session_state.page = "home"
                 st.rerun()
         
         st.markdown("---")
         
-        with st.form("teacher_login_form"):
-            username = st.text_input("Enter username", placeholder="e.g. afreen")
-            password = st.text_input("Enter password", type="password", placeholder="••••••••")
+        _, center_col, _ = st.columns([1, 2, 1])
+        with center_col:
+            st.markdown("""
+                <div style="background: rgba(30, 41, 59, 0.5); border: 1px solid rgba(255, 255, 255, 0.08); padding: 2rem; border-radius: 20px; backdrop-filter: blur(16px); box-shadow: 0 20px 40px rgba(0,0,0,0.4);">
+            """, unsafe_allow_html=True)
             
-            login_submitted = st.form_submit_button("🔒 Login to Dashboard")
+            with st.form("teacher_login_form"):
+                username = st.text_input("Username", placeholder="e.g. afreen")
+                password = st.text_input("Password", type="password", placeholder="••••••••")
+                st.write("")
+                login_submitted = st.form_submit_button("🔒 Secure Login")
+                
+                if login_submitted:
+                    if username.strip().lower() == "afreen" and password == "admin123":
+                        st.session_state.teacher_logged_in = True
+                        st.success("Login successful!")
+                        st.rerun()
+                    else:
+                        st.error("Invalid credentials. Try username: afreen | password: admin123")
             
-            if login_submitted:
-                # Default demo credentials: username 'afreen' and password 'admin123' (change as needed)
-                if username.strip().lower() == "afreen" and password == "admin123":
-                    st.session_state.teacher_logged_in = True
-                    st.success("Login successful! Redirecting...")
-                    st.rerun()
-                else:
-                    st.error("Invalid username or password. Try username: afreen | password: admin123")
+            st.markdown("</div>", unsafe_allow_html=True)
                     
         st.markdown('<div class="footer">Designed & Developed by Afreen</div>', unsafe_allow_html=True)
 
@@ -264,7 +299,7 @@ elif st.session_state.page == "teacher":
         col_top1, col_top2 = st.columns([4, 1])
         with col_top1:
             st.markdown('<h2 style="color:#f8fafc; font-weight:700;">📊 Teacher Dashboard</h2>', unsafe_allow_html=True)
-            st.write("View attendance history and export system record files.")
+            st.write("View live verified student attendance records and export files.")
         with col_top2:
             if st.button("🚪 Logout"):
                 st.session_state.teacher_logged_in = False
@@ -272,15 +307,11 @@ elif st.session_state.page == "teacher":
                 
         st.markdown("---")
 
-        data = {
-            "Student ID": ["STU001", "STU002", "STU003", "STU004"],
-            "Name": ["Afreen", "Rahul Sharma", "Priya Verma", "Aman Khan"],
-            "Time": ["09:00 AM", "09:05 AM", "09:50 AM", "09:15 AM"],
-            "Status": ["Present", "Present", "Late", "Present"]
-        }
-        df = pd.DataFrame(data)
+        # Convert session records list to DataFrame
+        df = pd.DataFrame(st.session_state.attendance_records)
 
-        st.dataframe(df, use_container_width=True)
+        # Display clean dataframe without index
+        st.dataframe(df, use_container_width=True, hide_index=True)
 
         csv = df.to_csv(index=False).encode('utf-8')
         st.download_button(
