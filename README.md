@@ -7,8 +7,7 @@
 ## 🚀 Live Demo
 
 Experience the application live on Streamlit Cloud:
-👉 [View AttendX AI Live App](https://share.streamlit.io) *(Replace with your live app link if available)*
-
+👉 [View AttendX AI Live App](https://ai-attendance-system-v2.streamlit.app) 
 ---
 
 ## ✨ Key Features
