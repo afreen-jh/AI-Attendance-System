@@ -54,13 +54,18 @@ if "user_role" not in st.session_state:
 if "student_username" not in st.session_state:
   st.session_state.student_username = ""
 
-# Custom CSS Styling for Sidebar & UI Polish
+# Custom CSS Styling for Typography, Layout & Coloring
 st.markdown(
     """
     <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+        color: #e6edf3;
+    }
     .main {
-        background-color: #0e1117;
-        color: #ffffff;
+        background-color: #0d1117;
     }
     /* Modern Attractive Sidebar Styling */
     [data-testid="stSidebar"] {
@@ -69,37 +74,49 @@ st.markdown(
         padding-top: 10px;
     }
     .sidebar-brand {
-        padding: 10px 15px;
-        background: rgba(79, 70, 229, 0.1);
-        border: 1px solid rgba(79, 70, 229, 0.3);
-        border-radius: 10px;
+        padding: 15px;
+        background: rgba(79, 70, 229, 0.15);
+        border: 1px solid rgba(79, 70, 229, 0.4);
+        border-radius: 12px;
         text-align: center;
         margin-bottom: 20px;
+    }
+    .login-card {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        padding: 30px;
+        border-radius: 16px;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
     }
     .metric-container {
         background-color: #161b22;
         border: 1px solid #30363d;
         padding: 20px;
         border-radius: 12px;
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
     }
-    .stTextInput input {
-        background-color: #161b22;
-        color: white;
-        border: 1px solid #30363d;
-        border-radius: 8px;
+    .stTextInput input, .stSelectbox select {
+        background-color: #0d1117 !important;
+        color: white !important;
+        border: 1px solid #30363d !important;
+        border-radius: 8px !important;
+        padding: 10px !important;
     }
     .stButton>button {
-        background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
+        background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
         color: white;
         border-radius: 8px;
-        padding: 0.5rem 1rem;
+        padding: 0.6rem 1rem;
         font-weight: 600;
         border: none;
         width: 100%;
+        box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+        transition: all 0.3s ease;
     }
     .stButton>button:hover {
         opacity: 0.9;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4);
     }
     </style>
 """,
@@ -108,55 +125,62 @@ st.markdown(
 
 # ----------------- AUTHENTICATION & LOGIN GATE -----------------
 if not st.session_state.logged_in:
-  st.markdown("<br><br>", unsafe_allow_html=True)
-  col1, col2, col3 = st.columns([1, 1.2, 1])
+  st.markdown("<br>", unsafe_allow_html=True)
+  col1, col2, col3 = st.columns([1, 1.5, 1])
 
   with col2:
     st.markdown(
-        "<h1 style='text-align: center;'>⚡ AttendX AI</h1>",
+        """
+        <div style='text-align: center; margin-bottom: 25px;'>
+            <h1 style='color: #ffffff; font-weight: 700; margin-bottom: 5px;'>⚡ AttendX AI</h1>
+            <p style='color: #8b949e; font-size: 15px;'>Next-Gen Real-Time Facial Recognition Attendance System</p>
+        </div>
+    """,
         unsafe_allow_html=True,
     )
-    st.markdown(
-        "<p style='text-align: center; color: #8b949e;'>Next-Gen Real-Time"
-        " Facial Recognition Attendance System</p>",
-        unsafe_allow_html=True,
-    )
-    st.markdown("<br>", unsafe_allow_html=True)
 
-    login_role = st.radio(
-        "Select Portal Login Type", ["Teacher Portal", "Student Portal"]
-    )
+    with st.container():
+      st.markdown('<div class="login-card">', unsafe_allow_html=True)
 
-    with st.form("login_form"):
-      if login_role == "Teacher Portal":
-        st.markdown("### 🔒 Teacher Login")
-        username_input = st.text_input("Username", value="")
-        password_input = st.text_input("Password", type="password", value="")
-        submit_login = st.form_submit_button("Login as Teacher")
+      login_role = st.radio(
+          "**Select Portal Login Type**", ["Teacher Portal", "Student Portal"]
+      )
+      st.markdown("<br>", unsafe_allow_html=True)
 
-        if submit_login:
-          if username_input == "sarah" and password_input == "admin123":
-            st.session_state.logged_in = True
-            st.session_state.user_role = "Teacher"
-            st.success("Logged in successfully as Teacher!")
-            st.rerun()
-          else:
-            st.error("Invalid credentials (try: sarah / admin123)")
-      else:
-        st.markdown("### 🎓 Student Portal Login")
-        student_name_input = st.text_input("Enter Your Full Name", value="")
-        student_id_input = st.text_input("Enter Your Student ID", value="")
-        submit_student = st.form_submit_button("Access Student Portal")
+      with st.form("login_form"):
+        if login_role == "Teacher Portal":
+          st.markdown("### 🔒 Teacher Login")
+          username_input = st.text_input("Username", value="")
+          password_input = st.text_input("Password", type="password", value="")
+          st.markdown("<br>", unsafe_allow_html=True)
+          submit_login = st.form_submit_button("Login as Teacher")
 
-        if submit_student:
-          if student_name_input and student_id_input:
-            st.session_state.logged_in = True
-            st.session_state.user_role = "Student"
-            st.session_state.student_username = student_name_input
-            st.success(f"Welcome, {student_name_input}!")
-            st.rerun()
-          else:
-            st.error("Please enter both Name and Student ID.")
+          if submit_login:
+            if username_input == "sarah" and password_input == "admin123":
+              st.session_state.logged_in = True
+              st.session_state.user_role = "Teacher"
+              st.success("Logged in successfully as Teacher!")
+              st.rerun()
+            else:
+              st.error("Invalid credentials (try: sarah / admin123)")
+        else:
+          st.markdown("### 🎓 Student Portal Login")
+          student_name_input = st.text_input("Enter Your Full Name", value="")
+          student_id_input = st.text_input("Enter Your Student ID", value="")
+          st.markdown("<br>", unsafe_allow_html=True)
+          submit_student = st.form_submit_button("Access Student Portal")
+
+          if submit_student:
+            if student_name_input and student_id_input:
+              st.session_state.logged_in = True
+              st.session_state.user_role = "Student"
+              st.session_state.student_username = student_name_input
+              st.success(f"Welcome, {student_name_input}!")
+              st.rerun()
+            else:
+              st.error("Please enter both Name and Student ID.")
+
+      st.markdown("</div>", unsafe_allow_html=True)
 
   st.stop()  # Halt execution until authenticated
 
@@ -171,7 +195,6 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-# User Role Badge
 role_display = (
     f"👨‍🏫 Teacher: **Admin**"
     if st.session_state.user_role == "Teacher"
@@ -194,7 +217,6 @@ else:
   menu_options = ["📊 My Attendance", "📷 Live Check-in"]
 
 selected_option = st.sidebar.radio("Navigation Menu", menu_options)
-# Clean up emoji prefix from choice string for routing logic
 choice = selected_option.split(" ", 1)[1]
 
 st.sidebar.markdown("---")
@@ -270,6 +292,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Register Student":
           "Enrollment No", value="", placeholder="Enter Enrollment No"
       )
 
+    st.markdown("<br>", unsafe_allow_html=True)
     submitted = st.form_submit_button("Register Student Profile")
 
     if submitted:
@@ -300,6 +323,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Train Model":
       "Compile current student embeddings and optimize face recognition"
       " matching vectors."
   )
+  st.markdown("<br>", unsafe_allow_html=True)
 
   if st.button("Compile & Train Model"):
     with st.spinner("Training model with latest registered profiles..."):
@@ -323,6 +347,7 @@ elif choice == "Live Attendance" or choice == "Live Check-in":
   st.write(
       "Position yourself in front of the camera to record real-time attendance."
   )
+  st.markdown("<br>", unsafe_allow_html=True)
 
   camera_image = st.camera_input("Take a snapshot for verification")
 
@@ -367,8 +392,10 @@ elif choice == "Live Attendance" or choice == "Live Check-in":
 # ----------------- TEACHER: RECORDS -----------------
 elif st.session_state.user_role == "Teacher" and choice == "Attendance Records":
   st.subheader("📋 Real-Time Attendance Logs")
+  st.markdown("<br>", unsafe_allow_html=True)
   if not st.session_state.attendance_logs.empty:
     st.dataframe(st.session_state.attendance_logs, use_container_width=True)
+    st.markdown("<br>", unsafe_allow_html=True)
 
     csv_data = st.session_state.attendance_logs.to_csv(index=False).encode(
         "utf-8"
@@ -386,6 +413,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Attendance Records":
 elif st.session_state.user_role == "Teacher" and choice == "Subject Report":
   st.subheader("📊 Subject-wise Attendance Breakdown")
   st.write("Overview analytics of class attendance performance.")
+  st.markdown("<br>", unsafe_allow_html=True)
   if not st.session_state.attendance_logs.empty:
     st.bar_chart(st.session_state.attendance_logs, x="Name", y="Timestamp")
   else:
@@ -398,6 +426,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Student Sheet":
       "Master database registry containing student profiles and exact"
       " registration timestamps (IST)."
   )
+  st.markdown("<br>", unsafe_allow_html=True)
   if not st.session_state.students_db.empty:
     st.dataframe(st.session_state.students_db, use_container_width=True)
   else:
@@ -408,6 +437,7 @@ elif st.session_state.user_role == "Student" and choice == "My Attendance":
   st.subheader(
       f"📊 Attendance History for {st.session_state.student_username}"
   )
+  st.markdown("<br>", unsafe_allow_html=True)
   if not st.session_state.attendance_logs.empty:
     student_logs = st.session_state.attendance_logs[
         st.session_state.attendance_logs["Name"]
