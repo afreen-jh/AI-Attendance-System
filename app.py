@@ -14,9 +14,7 @@ except ImportError:
 
 # Page Configuration
 st.set_page_config(
-    page_title="AttendX AI - Secure Login Portal",
-    page_icon="⚡",
-    layout="wide",
+    page_title="AttendX AI - Secure Portal", page_icon="⚡", layout="wide"
 )
 
 # Initialize IST Timezone
@@ -54,12 +52,12 @@ if "user_role" not in st.session_state:
 if "student_username" not in st.session_state:
   st.session_state.student_username = ""
 
-# Custom CSS Styling matching the second screenshot background & layout
+# Custom CSS Styling for Theme, Sidebar, and Containers
 st.markdown(
     """
     <style>
     .stApp {
-        background: radial-gradient(circle at 50% 30%, #1f1435 0%, #0d1117 70%);
+        background: radial-gradient(circle at 50% 20%, #1a103c 0%, #0d1117 75%);
         color: #ffffff;
     }
     [data-testid="stSidebar"] {
@@ -73,6 +71,15 @@ st.markdown(
         border: 1px solid rgba(79, 70, 229, 0.4);
         border-radius: 12px;
         text-align: center;
+        margin-bottom: 15px;
+    }
+    .user-badge {
+        background-color: #21262d;
+        border: 1px solid #30363d;
+        padding: 10px 14px;
+        border-radius: 8px;
+        font-size: 14px;
+        color: #c9d1d9;
         margin-bottom: 20px;
     }
     .metric-container {
@@ -96,6 +103,7 @@ st.markdown(
         font-weight: 600;
         border: none;
         width: 100%;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
     }
     .stButton>button:hover {
         opacity: 0.9;
@@ -122,7 +130,6 @@ if not st.session_state.logged_in:
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Horizontal Tabs matching second screenshot
     login_tab = st.radio(
         "Portal Selection",
         ["Teacher Portal", "Student Portal"],
@@ -162,9 +169,9 @@ if not st.session_state.logged_in:
           else:
             st.error("Please enter both Name and Student ID.")
 
-  st.stop()  # Halt execution until authenticated
+  st.stop()
 
-# ----------------- ATTRACTIVE MAIN APP SIDEBAR -----------------
+# ----------------- SIDEBAR NAVIGATION -----------------
 st.sidebar.markdown(
     """
     <div class="sidebar-brand">
@@ -175,13 +182,14 @@ st.sidebar.markdown(
     unsafe_allow_html=True,
 )
 
-role_display = (
-    f"👨‍🏫 Teacher: **Admin**"
+role_text = (
+    "👨‍🏫 Teacher: <b>Admin</b>"
     if st.session_state.user_role == "Teacher"
-    else f"🎓 Student: **{st.session_state.student_username}**"
+    else f"🎓 Student: <b>{st.session_state.student_username}</b>"
 )
-st.sidebar.markdown(role_display)
-st.sidebar.markdown("---")
+st.sidebar.markdown(
+    f'<div class="user-badge">{role_text}</div>', unsafe_allow_html=True
+)
 
 if st.session_state.user_role == "Teacher":
   menu_options = [
