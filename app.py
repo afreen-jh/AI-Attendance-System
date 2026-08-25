@@ -62,10 +62,19 @@ st.markdown(
         background-color: #0e1117;
         color: #ffffff;
     }
+    /* Modern Attractive Sidebar Styling */
     [data-testid="stSidebar"] {
-        background-color: #161b22;
+        background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
         border-right: 1px solid #30363d;
-        padding-top: 20px;
+        padding-top: 10px;
+    }
+    .sidebar-brand {
+        padding: 10px 15px;
+        background: rgba(79, 70, 229, 0.1);
+        border: 1px solid rgba(79, 70, 229, 0.3);
+        border-radius: 10px;
+        text-align: center;
+        margin-bottom: 20px;
     }
     .metric-container {
         background-color: #161b22;
@@ -151,30 +160,45 @@ if not st.session_state.logged_in:
 
   st.stop()  # Halt execution until authenticated
 
-# ----------------- MAIN APP SIDEBAR -----------------
-st.sidebar.markdown("## ⚡ AttendX Portal")
-st.sidebar.markdown(f"**Role:** {st.session_state.user_role}")
-if st.session_state.user_role == "Student":
-  st.sidebar.markdown(f"**User:** {st.session_state.student_username}")
+# ----------------- ATTRACTIVE MAIN APP SIDEBAR -----------------
+st.sidebar.markdown(
+    """
+    <div class="sidebar-brand">
+        <h3 style='color: #ffffff; margin: 0;'>⚡ AttendX AI</h3>
+        <p style='color: #8b949e; font-size: 12px; margin: 0;'>Smart Attendance Portal</p>
+    </div>
+""",
+    unsafe_allow_html=True,
+)
+
+# User Role Badge
+role_display = (
+    f"👨‍🏫 Teacher: **Admin**"
+    if st.session_state.user_role == "Teacher"
+    else f"🎓 Student: **{st.session_state.student_username}**"
+)
+st.sidebar.markdown(role_display)
 st.sidebar.markdown("---")
 
 if st.session_state.user_role == "Teacher":
   menu_options = [
-      "Dashboard",
-      "Register",
-      "Train model",
-      "Attendance",
-      "Records",
-      "Subject report",
-      "Student sheet",
+      "📊 Dashboard",
+      "👤 Register Student",
+      "🧠 Train Model",
+      "📷 Live Attendance",
+      "📋 Attendance Records",
+      "📈 Subject Report",
+      "📑 Student Sheet",
   ]
 else:
-  menu_options = ["My Attendance", "Live Check-in"]
+  menu_options = ["📊 My Attendance", "📷 Live Check-in"]
 
-choice = st.sidebar.radio("Navigation", menu_options)
+selected_option = st.sidebar.radio("Navigation Menu", menu_options)
+# Clean up emoji prefix from choice string for routing logic
+choice = selected_option.split(" ", 1)[1]
 
 st.sidebar.markdown("---")
-if st.sidebar.button("Logout"):
+if st.sidebar.button("🚪 Logout Session"):
   st.session_state.logged_in = False
   st.rerun()
 
@@ -226,7 +250,7 @@ if st.session_state.user_role == "Teacher" and choice == "Dashboard":
   )
 
 # ----------------- TEACHER: REGISTER STUDENT -----------------
-elif st.session_state.user_role == "Teacher" and choice == "Register":
+elif st.session_state.user_role == "Teacher" and choice == "Register Student":
   st.subheader("👤 Student Registration Portal")
 
   with st.form("registration_form"):
@@ -270,7 +294,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Register":
         st.error("Please fill in all required fields.")
 
 # ----------------- TEACHER: TRAIN MODEL -----------------
-elif st.session_state.user_role == "Teacher" and choice == "Train model":
+elif st.session_state.user_role == "Teacher" and choice == "Train Model":
   st.subheader("🧠 Model Training Engine")
   st.write(
       "Compile current student embeddings and optimize face recognition"
@@ -288,7 +312,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Train model":
     )
 
 # ----------------- ATTENDANCE CHECK-IN -----------------
-elif choice == "Attendance" or choice == "Live Check-in":
+elif choice == "Live Attendance" or choice == "Live Check-in":
   st.subheader("📷 Live Attendance Scanner")
 
   if not OPENCV_AVAILABLE:
@@ -341,7 +365,7 @@ elif choice == "Attendance" or choice == "Live Check-in":
         )
 
 # ----------------- TEACHER: RECORDS -----------------
-elif st.session_state.user_role == "Teacher" and choice == "Records":
+elif st.session_state.user_role == "Teacher" and choice == "Attendance Records":
   st.subheader("📋 Real-Time Attendance Logs")
   if not st.session_state.attendance_logs.empty:
     st.dataframe(st.session_state.attendance_logs, use_container_width=True)
@@ -359,7 +383,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Records":
     st.info("No attendance logs recorded yet for today.")
 
 # ----------------- TEACHER: SUBJECT REPORT -----------------
-elif st.session_state.user_role == "Teacher" and choice == "Subject report":
+elif st.session_state.user_role == "Teacher" and choice == "Subject Report":
   st.subheader("📊 Subject-wise Attendance Breakdown")
   st.write("Overview analytics of class attendance performance.")
   if not st.session_state.attendance_logs.empty:
@@ -368,7 +392,7 @@ elif st.session_state.user_role == "Teacher" and choice == "Subject report":
     st.info("Insufficient data for analytics report.")
 
 # ----------------- TEACHER: STUDENT SHEET -----------------
-elif st.session_state.user_role == "Teacher" and choice == "Student sheet":
+elif st.session_state.user_role == "Teacher" and choice == "Student Sheet":
   st.subheader("📑 Comprehensive Student Master Sheet")
   st.write(
       "Master database registry containing student profiles and exact"
