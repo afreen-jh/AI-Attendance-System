@@ -48,6 +48,12 @@ if "attendance_logs" not in st.session_state:
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = False
 
+if "user_role" not in st.session_state:
+  st.session_state.user_role = "Teacher"
+
+if "student_username" not in st.session_state:
+  st.session_state.student_username = ""
+
 # Custom CSS Styling for Sidebar & UI Polish
 st.markdown(
     """
@@ -108,37 +114,63 @@ if not st.session_state.logged_in:
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
-    with st.form("login_form"):
-      st.markdown("### 🔒 Teacher Portal Login")
-      username_input = st.text_input("Teacher Username", value="")
-      password_input = st.text_input("Password", type="password", value="")
-      st.markdown("<br>", unsafe_allow_html=True)
-      submit_login = st.form_submit_button("Login as Teacher")
+    login_role = st.radio(
+        "Select Portal Login Type", ["Teacher Portal", "Student Portal"]
+    )
 
-      if submit_login:
-        if username_input == "sarah" and password_input == "admin123":
-          st.session_state.logged_in = True
-          st.success("Logged in successfully!")
-          st.rerun()
-        else:
-          st.error("Invalid credentials (try: sarah / admin123)")
+    with st.form("login_form"):
+      if login_role == "Teacher Portal":
+        st.markdown("### 🔒 Teacher Login")
+        username_input = st.text_input("Username", value="")
+        password_input = st.text_input("Password", type="password", value="")
+        submit_login = st.form_submit_button("Login as Teacher")
+
+        if submit_login:
+          if username_input == "sarah" and password_input == "admin123":
+            st.session_state.logged_in = True
+            st.session_state.user_role = "Teacher"
+            st.success("Logged in successfully as Teacher!")
+            st.rerun()
+          else:
+            st.error("Invalid credentials (try: sarah / admin123)")
+      else:
+        st.markdown("### 🎓 Student Portal Login")
+        student_name_input = st.text_input("Enter Your Full Name", value="")
+        student_id_input = st.text_input("Enter Your Student ID", value="")
+        submit_student = st.form_submit_button("Access Student Portal")
+
+        if submit_student:
+          if student_name_input and student_id_input:
+            st.session_state.logged_in = True
+            st.session_state.user_role = "Student"
+            st.session_state.student_username = student_name_input
+            st.success(f"Welcome, {student_name_input}!")
+            st.rerun()
+          else:
+            st.error("Please enter both Name and Student ID.")
 
   st.stop()  # Halt execution until authenticated
 
 # ----------------- MAIN APP SIDEBAR -----------------
 st.sidebar.markdown("## ⚡ AttendX Portal")
-st.sidebar.markdown("**Role:** Teacher")
+st.sidebar.markdown(f"**Role:** {st.session_state.user_role}")
+if st.session_state.user_role == "Student":
+  st.sidebar.markdown(f"**User:** {st.session_state.student_username}")
 st.sidebar.markdown("---")
 
-menu_options = [
-    "Dashboard",
-    "Register",
-    "Train model",
-    "Attendance",
-    "Records",
-    "Subject report",
-    "Student sheet",
-]
+if st.session_state.user_role == "Teacher":
+  menu_options = [
+      "Dashboard",
+      "Register",
+      "Train model",
+      "Attendance",
+      "Records",
+      "Subject report",
+      "Student sheet",
+  ]
+else:
+  menu_options = ["My Attendance", "Live Check-in"]
+
 choice = st.sidebar.radio("Navigation", menu_options)
 
 st.sidebar.markdown("---")
@@ -146,8 +178,8 @@ if st.sidebar.button("Logout"):
   st.session_state.logged_in = False
   st.rerun()
 
-# ----------------- DASHBOARD -----------------
-if choice == "Dashboard":
+# ----------------- TEACHER: DASHBOARD -----------------
+if st.session_state.user_role == "Teacher" and choice == "Dashboard":
   st.title("⚡ AttendX AI - Smart Attendance Portal")
   st.write(
       "Welcome to the next-generation real-time facial recognition and"
@@ -193,8 +225,8 @@ if choice == "Dashboard":
       " capture live attendance, or view master records."
   )
 
-# ----------------- REGISTER STUDENT -----------------
-elif choice == "Register":
+# ----------------- TEACHER: REGISTER STUDENT -----------------
+elif st.session_state.user_role == "Teacher" and choice == "Register":
   st.subheader("👤 Student Registration Portal")
 
   with st.form("registration_form"):
@@ -237,8 +269,8 @@ elif choice == "Register":
       else:
         st.error("Please fill in all required fields.")
 
-# ----------------- TRAIN MODEL -----------------
-elif choice == "Train model":
+# ----------------- TEACHER: TRAIN MODEL -----------------
+elif st.session_state.user_role == "Teacher" and choice == "Train model":
   st.subheader("🧠 Model Training Engine")
   st.write(
       "Compile current student embeddings and optimize face recognition"
@@ -256,7 +288,7 @@ elif choice == "Train model":
     )
 
 # ----------------- ATTENDANCE CHECK-IN -----------------
-elif choice == "Attendance":
+elif choice == "Attendance" or choice == "Live Check-in":
   st.subheader("📷 Live Attendance Scanner")
 
   if not OPENCV_AVAILABLE:
@@ -272,13 +304,12 @@ elif choice == "Attendance":
 
   if camera_image is not None:
     st.success(f"Face captured successfully at {get_current_time_str()} (IST)!")
-    if not st.session_state.students_db.empty:
-      # Automatically pick the latest registered student or match against database
-      student_rec = st.session_state.students_db.iloc[-1]
+    if st.session_state.user_role == "Student":
+      student_name = st.session_state.student_username
       attendance_entry = pd.DataFrame({
-          "ID": [student_rec["ID"]],
-          "Name": [student_rec["Name"]],
-          "Branch": [student_rec["Branch"]],
+          "ID": ["STU-SELF"],
+          "Name": [student_name],
+          "Branch": ["DSAI"],
           "Timestamp": [get_current_time_str()],
           "Status": ["Present"],
       })
@@ -286,16 +317,31 @@ elif choice == "Attendance":
           [st.session_state.attendance_logs, attendance_entry],
           ignore_index=True,
       )
-      st.info(
-          f"Attendance marked successfully for: **{student_rec['Name']}**"
-      )
+      st.info(f"Attendance marked successfully for: **{student_name}**")
     else:
-      st.warning(
-          "No registered students found in database. Please register first."
-      )
+      if not st.session_state.students_db.empty:
+        student_rec = st.session_state.students_db.iloc[-1]
+        attendance_entry = pd.DataFrame({
+            "ID": [student_rec["ID"]],
+            "Name": [student_rec["Name"]],
+            "Branch": [student_rec["Branch"]],
+            "Timestamp": [get_current_time_str()],
+            "Status": ["Present"],
+        })
+        st.session_state.attendance_logs = pd.concat(
+            [st.session_state.attendance_logs, attendance_entry],
+            ignore_index=True,
+        )
+        st.info(
+            f"Attendance marked successfully for: **{student_rec['Name']}**"
+        )
+      else:
+        st.warning(
+            "No registered students found in database. Please register first."
+        )
 
-# ----------------- RECORDS -----------------
-elif choice == "Records":
+# ----------------- TEACHER: RECORDS -----------------
+elif st.session_state.user_role == "Teacher" and choice == "Records":
   st.subheader("📋 Real-Time Attendance Logs")
   if not st.session_state.attendance_logs.empty:
     st.dataframe(st.session_state.attendance_logs, use_container_width=True)
@@ -312,8 +358,8 @@ elif choice == "Records":
   else:
     st.info("No attendance logs recorded yet for today.")
 
-# ----------------- SUBJECT REPORT -----------------
-elif choice == "Subject report":
+# ----------------- TEACHER: SUBJECT REPORT -----------------
+elif st.session_state.user_role == "Teacher" and choice == "Subject report":
   st.subheader("📊 Subject-wise Attendance Breakdown")
   st.write("Overview analytics of class attendance performance.")
   if not st.session_state.attendance_logs.empty:
@@ -321,8 +367,8 @@ elif choice == "Subject report":
   else:
     st.info("Insufficient data for analytics report.")
 
-# ----------------- STUDENT SHEET -----------------
-elif choice == "Student sheet":
+# ----------------- TEACHER: STUDENT SHEET -----------------
+elif st.session_state.user_role == "Teacher" and choice == "Student sheet":
   st.subheader("📑 Comprehensive Student Master Sheet")
   st.write(
       "Master database registry containing student profiles and exact"
@@ -332,3 +378,23 @@ elif choice == "Student sheet":
     st.dataframe(st.session_state.students_db, use_container_width=True)
   else:
     st.info("No student profiles registered yet.")
+
+# ----------------- STUDENT: MY ATTENDANCE -----------------
+elif st.session_state.user_role == "Student" and choice == "My Attendance":
+  st.subheader(
+      f"📊 Attendance History for {st.session_state.student_username}"
+  )
+  if not st.session_state.attendance_logs.empty:
+    student_logs = st.session_state.attendance_logs[
+        st.session_state.attendance_logs["Name"]
+        == st.session_state.student_username
+    ]
+    if not student_logs.empty:
+      st.dataframe(student_logs, use_container_width=True)
+    else:
+      st.info(
+          "No attendance records found under your name yet. Use 'Live"
+          " Check-in' to record attendance."
+      )
+  else:
+    st.info("No attendance records found yet.")
