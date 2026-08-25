@@ -48,7 +48,7 @@ if "attendance_logs" not in st.session_state:
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = True
 
-# Custom CSS Styling for Sidebar & UI Polish
+# Custom CSS Styling for Sidebar, Metrics, and UI Polish
 st.markdown(
     """
     <style>
@@ -59,6 +59,13 @@ st.markdown(
     [data-testid="stSidebar"] {
         background-color: #161b22;
         border-right: 1px solid #30363d;
+    }
+    .metric-container {
+        background-color: #161b22;
+        border: 1px solid #30363d;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
     .stButton>button {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -102,21 +109,41 @@ if choice == "Dashboard":
       "Welcome to the next-generation real-time facial recognition and"
       " attendance tracking system."
   )
+  st.markdown("<br>", unsafe_allow_html=True)
 
   col1, col2, col3 = st.columns(3)
   with col1:
-    st.metric(
-        label="Registered Students",
-        value=len(st.session_state.students_db),
+    st.markdown(
+        f"""
+        <div class="metric-container">
+            <p style='color: #8b949e; margin-bottom: 5px; font-size: 14px;'>Registered Students</p>
+            <h2 style='color: #ffffff; margin-top: 0;'>{len(st.session_state.students_db)}</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
   with col2:
-    st.metric(
-        label="Total Attendance Logs",
-        value=len(st.session_state.attendance_logs),
+    st.markdown(
+        f"""
+        <div class="metric-container">
+            <p style='color: #8b949e; margin-bottom: 5px; font-size: 14px;'>Total Attendance Logs</p>
+            <h2 style='color: #ffffff; margin-top: 0;'>{len(st.session_state.attendance_logs)}</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
     )
   with col3:
-    st.metric(label="System Status", value="Online & Active")
+    st.markdown(
+        """
+        <div class="metric-container">
+            <p style='color: #8b949e; margin-bottom: 5px; font-size: 14px;'>System Status</p>
+            <h2 style='color: #2ea043; margin-top: 0;'>Online & Active</h2>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
 
+  st.markdown("<br><br>", unsafe_allow_html=True)
   st.info(
       "👈 Use the sidebar navigation to register new students, run models,"
       " capture live attendance, or view master records."
