@@ -48,7 +48,7 @@ if "attendance_logs" not in st.session_state:
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = False
 
-# Custom CSS Styling for Sidebar, Login Form & UI Polish
+# Custom CSS Styling for Sidebar & UI Polish
 st.markdown(
     """
     <style>
@@ -59,6 +59,7 @@ st.markdown(
     [data-testid="stSidebar"] {
         background-color: #161b22;
         border-right: 1px solid #30363d;
+        padding-top: 20px;
     }
     .metric-container {
         background-color: #161b22;
@@ -127,6 +128,7 @@ if not st.session_state.logged_in:
 # ----------------- MAIN APP SIDEBAR -----------------
 st.sidebar.markdown("## ⚡ AttendX Portal")
 st.sidebar.markdown("**Role:** Teacher")
+st.sidebar.markdown("---")
 
 menu_options = [
     "Dashboard",
@@ -139,6 +141,7 @@ menu_options = [
 ]
 choice = st.sidebar.radio("Navigation", menu_options)
 
+st.sidebar.markdown("---")
 if st.sidebar.button("Logout"):
   st.session_state.logged_in = False
   st.rerun()
@@ -197,11 +200,19 @@ elif choice == "Register":
   with st.form("registration_form"):
     col1, col2 = st.columns(2)
     with col1:
-      student_id = st.text_input("Student ID (e.g. STU101)", value="STU101")
-      full_name = st.text_input("Full Name", value="Afreen")
+      student_id = st.text_input(
+          "Student ID (e.g. STU101)", value="", placeholder="Enter Student ID"
+      )
+      full_name = st.text_input(
+          "Full Name", value="", placeholder="Enter Full Name"
+      )
     with col2:
-      branch = st.text_input("Branch / Department", value="DSAI")
-      enrollment_no = st.text_input("Enrollment No", value="2400101751")
+      branch = st.text_input(
+          "Branch / Department", value="", placeholder="e.g. DSAI"
+      )
+      enrollment_no = st.text_input(
+          "Enrollment No", value="", placeholder="Enter Enrollment No"
+      )
 
     submitted = st.form_submit_button("Register Student Profile")
 
@@ -262,7 +273,8 @@ elif choice == "Attendance":
   if camera_image is not None:
     st.success(f"Face captured successfully at {get_current_time_str()} (IST)!")
     if not st.session_state.students_db.empty:
-      student_rec = st.session_state.students_db.iloc[0]
+      # Automatically pick the latest registered student or match against database
+      student_rec = st.session_state.students_db.iloc[-1]
       attendance_entry = pd.DataFrame({
           "ID": [student_rec["ID"]],
           "Name": [student_rec["Name"]],
