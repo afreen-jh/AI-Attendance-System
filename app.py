@@ -46,21 +46,15 @@ if "attendance_logs" not in st.session_state:
   )
 
 if "logged_in" not in st.session_state:
-  st.session_state.logged_in = False
+  st.session_state.logged_in = True  # Keep logged in by default to match original view
 
-# Custom CSS Styling (SaaS Dark Theme & Clean UI Fixes)
+# Custom CSS Styling (Original Clean Theme)
 st.markdown(
     """
     <style>
     .main {
         background-color: #0e1117;
         color: #ffffff;
-    }
-    .stTextInput input {
-        background-color: #161b22;
-        color: white;
-        border: 1px solid #30363d;
-        border-radius: 8px;
     }
     .stButton>button {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -69,7 +63,6 @@ st.markdown(
         padding: 0.5rem 1rem;
         font-weight: 600;
         border: none;
-        width: 100%;
     }
     .stButton>button:hover {
         opacity: 0.9;
@@ -79,43 +72,7 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# ----------------- AUTHENTICATION & LOGIN GATE -----------------
-if not st.session_state.logged_in:
-  st.markdown("<br><br>", unsafe_allow_html=True)
-  col1, col2, col3 = st.columns([1, 1.2, 1])
-
-  with col2:
-    st.markdown(
-        "<h1 style='text-align: center;'>⚡ AttendX AI</h1>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='text-align: center; color: #8b949e;'>Next-Gen Real-Time"
-        " Facial Recognition Attendance System</p>",
-        unsafe_allow_html=True,
-    )
-    st.markdown("<br>", unsafe_allow_html=True)
-
-    with st.form("login_form"):
-      st.markdown("### 🔒 Teacher Portal Login")
-      username_input = st.text_input("Teacher Username", value="")
-      password_input = st.text_input(
-          "Password", type="password", value=""
-      )
-      st.markdown("<br>", unsafe_allow_html=True)
-      submit_login = st.form_submit_button("Login as Teacher")
-
-      if submit_login:
-        if username_input == "sarah" and password_input == "admin123":
-          st.session_state.logged_in = True
-          st.success("Logged in successfully!")
-          st.rerun()
-        else:
-          st.error("Invalid credentials (try: sarah / admin123)")
-
-  st.stop()  # Stop execution here until logged in
-
-# ----------------- MAIN APP (AFTER LOGIN) -----------------
+# Sidebar Navigation
 st.sidebar.markdown("## ⚡ AttendX Portal")
 st.sidebar.markdown("**Role:** Teacher")
 
@@ -220,8 +177,8 @@ elif choice == "Attendance":
   st.subheader("📷 Live Attendance Scanner")
   
   if not OPENCV_AVAILABLE:
-      st.warning("⚠️ OpenCV (camera module) is unavailable on this cloud server environment.")
-      
+      st.warning("⚠️ OpenCV (camera module) is running in cloud fallback mode.")
+
   st.write(
       "Position yourself in front of the camera to record real-time attendance."
   )
