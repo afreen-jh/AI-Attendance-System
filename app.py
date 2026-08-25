@@ -14,7 +14,7 @@ except ImportError:
 
 # Page Configuration
 st.set_page_config(
-    page_title="AttendX AI - Smart Attendance Portal",
+    page_title="AttendX AI - Secure Login Portal",
     page_icon="⚡",
     layout="wide",
 )
@@ -54,12 +54,12 @@ if "user_role" not in st.session_state:
 if "student_username" not in st.session_state:
   st.session_state.student_username = ""
 
-# Custom CSS Styling for Sidebar & Clean Layout
+# Custom CSS Styling matching the second screenshot background & layout
 st.markdown(
     """
     <style>
-    .main {
-        background-color: #0e1117;
+    .stApp {
+        background: radial-gradient(circle at 50% 30%, #1f1435 0%, #0d1117 70%);
         color: #ffffff;
     }
     [data-testid="stSidebar"] {
@@ -108,45 +108,47 @@ st.markdown(
 # ----------------- AUTHENTICATION & LOGIN GATE -----------------
 if not st.session_state.logged_in:
   st.markdown("<br><br>", unsafe_allow_html=True)
-  col1, col2, col3 = st.columns([1, 1.2, 1])
+  col1, col2, col3 = st.columns([1, 1.4, 1])
 
   with col2:
     st.markdown(
-        "<h1 style='text-align: center;'>⚡ AttendX AI</h1>",
-        unsafe_allow_html=True,
-    )
-    st.markdown(
-        "<p style='text-align: center; color: #8b949e;'>Next-Gen Real-Time"
-        " Facial Recognition Attendance System</p>",
+        """
+        <div style='text-align: center;'>
+            <h1>⚡ AttendX AI - Secure Login Portal</h1>
+            <p style='color: #8b949e;'>Next-Gen Real-Time Facial Recognition Attendance System</p>
+        </div>
+        """,
         unsafe_allow_html=True,
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
-    login_role = st.radio(
-        "Select Portal Login Type", ["Teacher Portal", "Student Portal"]
+    # Horizontal Tabs matching second screenshot
+    login_tab = st.radio(
+        "Portal Selection",
+        ["Teacher Portal", "Student Portal"],
+        horizontal=True,
+        label_visibility="collapsed",
     )
     st.markdown("<br>", unsafe_allow_html=True)
 
     with st.form("login_form"):
-      if login_role == "Teacher Portal":
-        st.markdown("### 🔒 Teacher Login")
-        username_input = st.text_input("Username", value="")
+      if login_tab == "Teacher Portal":
+        username_input = st.text_input("Teacher Username", value="")
         password_input = st.text_input("Password", type="password", value="")
         st.markdown("<br>", unsafe_allow_html=True)
         submit_login = st.form_submit_button("Login as Teacher")
 
         if submit_login:
-          if username_input == "sarah" and password_input == "admin123":
+          if username_input == "SARAH" and password_input == "admin123":
             st.session_state.logged_in = True
             st.session_state.user_role = "Teacher"
             st.success("Logged in successfully as Teacher!")
             st.rerun()
           else:
-            st.error("Invalid credentials (try: sarah / admin123)")
+            st.error("Invalid Teacher Credentials")
       else:
-        st.markdown("### 🎓 Student Portal Login")
-        student_name_input = st.text_input("Enter Your Full Name", value="")
-        student_id_input = st.text_input("Enter Your Student ID", value="")
+        student_name_input = st.text_input("Student Full Name", value="")
+        student_id_input = st.text_input("Student ID", value="")
         st.markdown("<br>", unsafe_allow_html=True)
         submit_student = st.form_submit_button("Access Student Portal")
 
