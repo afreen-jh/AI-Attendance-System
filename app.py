@@ -46,15 +46,19 @@ if "attendance_logs" not in st.session_state:
   )
 
 if "logged_in" not in st.session_state:
-  st.session_state.logged_in = True  # Keep logged in by default to match original view
+  st.session_state.logged_in = True
 
-# Custom CSS Styling (Original Clean Theme)
+# Custom CSS Styling for Sidebar & UI Polish
 st.markdown(
     """
     <style>
     .main {
         background-color: #0e1117;
         color: #ffffff;
+    }
+    [data-testid="stSidebar"] {
+        background-color: #161b22;
+        border-right: 1px solid #30363d;
     }
     .stButton>button {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -175,9 +179,11 @@ elif choice == "Train model":
 # ----------------- ATTENDANCE CHECK-IN -----------------
 elif choice == "Attendance":
   st.subheader("📷 Live Attendance Scanner")
-  
+
   if not OPENCV_AVAILABLE:
-      st.warning("⚠️ OpenCV (camera module) is running in cloud fallback mode.")
+    st.warning(
+        "⚠️ OpenCV (camera module) is running in cloud fallback mode."
+    )
 
   st.write(
       "Position yourself in front of the camera to record real-time attendance."
