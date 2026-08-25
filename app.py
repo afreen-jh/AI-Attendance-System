@@ -1,10 +1,16 @@
 from datetime import datetime
 import os
-import cv2
-import numpy as np
 import pandas as pd
 import pytz
 import streamlit as st
+
+# Safe OpenCV Import for Cloud Compatibility
+try:
+  import cv2
+  import numpy as np
+  OPENCV_AVAILABLE = True
+except ImportError:
+  OPENCV_AVAILABLE = False
 
 # Page Configuration
 st.set_page_config(
@@ -212,6 +218,10 @@ elif choice == "Train model":
 # ----------------- ATTENDANCE CHECK-IN -----------------
 elif choice == "Attendance":
   st.subheader("📷 Live Attendance Scanner")
+  
+  if not OPENCV_AVAILABLE:
+      st.warning("⚠️ OpenCV (camera module) is unavailable on this cloud server environment.")
+      
   st.write(
       "Position yourself in front of the camera to record real-time attendance."
   )
