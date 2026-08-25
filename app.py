@@ -42,13 +42,19 @@ if "attendance_logs" not in st.session_state:
 if "logged_in" not in st.session_state:
   st.session_state.logged_in = False
 
-# Custom CSS Styling (SaaS Dark Theme & Glassmorphism)
+# Custom CSS Styling (SaaS Dark Theme & Clean UI Fixes)
 st.markdown(
     """
     <style>
     .main {
         background-color: #0e1117;
         color: #ffffff;
+    }
+    .stTextInput input {
+        background-color: #161b22;
+        color: white;
+        border: 1px solid #30363d;
+        border-radius: 8px;
     }
     .stButton>button {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
@@ -57,29 +63,55 @@ st.markdown(
         padding: 0.5rem 1rem;
         font-weight: 600;
         border: none;
+        width: 100%;
     }
     .stButton>button:hover {
         opacity: 0.9;
-    }
-    .metric-card {
-        background: rgba(255, 255, 255, 0.05);
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        padding: 20px;
-        border-radius: 12px;
     }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
-# Sidebar Navigation
-st.sidebar.markdown(
-    "## ⚡ AttendX Portal"
-)  # Fixed citation requirement / formatting
-st.sidebar.markdown(
-    f"**Role:** {'Teacher' if st.session_state.logged_in else 'Guest'}"
-)
+# ----------------- AUTHENTICATION & LOGIN GATE -----------------
+if not st.session_state.logged_in:
+  st.markdown("<br><br>", unsafe_allow_html=True)
+  col1, col2, col3 = st.columns([1, 1.2, 1])
+
+  with col2:
+    st.markdown(
+        "<h1 style='text-align: center;'>⚡ AttendX AI</h1>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p style='text-align: center; color: #8b949e;'>Next-Gen Real-Time"
+        " Facial Recognition Attendance System</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    with st.form("login_form"):
+      st.markdown("### 🔒 Teacher Portal Login")
+      username_input = st.text_input("Teacher Username", value="")
+      password_input = st.text_input(
+          "Password", type="password", value=""
+      )
+      st.markdown("<br>", unsafe_allow_html=True)
+      submit_login = st.form_submit_button("Login as Teacher")
+
+      if submit_login:
+        if username_input == "sarah" and password_input == "admin123":
+          st.session_state.logged_in = True
+          st.success("Logged in successfully!")
+          st.rerun()
+        else:
+          st.error("Invalid credentials (try: sarah / admin123)")
+
+  st.stop()  # Stop execution here until logged in
+
+# ----------------- MAIN APP (AFTER LOGIN) -----------------
+st.sidebar.markdown("## ⚡ AttendX Portal")
+st.sidebar.markdown("**Role:** Teacher")
 
 menu_options = [
     "Dashboard",
@@ -87,9 +119,14 @@ menu_options = [
     "Train model",
     "Attendance",
     "Records",
+    "Subject report",
     "Student sheet",
 ]
 choice = st.sidebar.radio("Navigation", menu_options)
+
+if st.sidebar.button("Logout"):
+  st.session_state.logged_in = False
+  st.rerun()
 
 # ----------------- DASHBOARD -----------------
 if choice == "Dashboard":
@@ -184,7 +221,6 @@ elif choice == "Attendance":
   if camera_image is not None:
     st.success(f"Face captured successfully at {get_current_time_str()} (IST)!")
     if not st.session_state.students_db.empty:
-      # Automatically log the first active student for demonstration/testing
       student_rec = st.session_state.students_db.iloc[0]
       attendance_entry = pd.DataFrame({
           "ID": [student_rec["ID"]],
@@ -228,9 +264,7 @@ elif choice == "Subject report":
   st.subheader("📊 Subject-wise Attendance Breakdown")
   st.write("Overview analytics of class attendance performance.")
   if not st.session_state.attendance_logs.empty:
-    st.bar_chart(
-        st.session_state.attendance_logs, x="Name", y="Timestamp"
-    )  # Placeholder analytics chart
+    st.bar_chart(st.session_state.attendance_logs, x="Name", y="Timestamp")
   else:
     st.info("Insufficient data for analytics report.")
 
@@ -245,21 +279,3 @@ elif choice == "Student sheet":
     st.dataframe(st.session_state.students_db, use_container_width=True)
   else:
     st.info("No student profiles registered yet.")
-
-# Sidebar Admin Authentication Control
-st.sidebar.markdown("---")
-if not st.session_state.logged_in:
-  with st.sidebar.expander("🔒 Teacher Login"):
-    username_input = st.text_input("Username", value="")
-    password_input = st.text_input("Password", type="password", value="")
-    if st.button("Login"):
-      if username_input == "sarah" and password_input == "admin123":
-        st.session_state.logged_in = True
-        st.success("Logged in successfully!")
-        st.rerun()
-      else:
-        st.error("Invalid credentials (username: sarah | password: admin123)")
-else:
-  if st.sidebar.button("Logout"):
-    st.session_state.logged_in = False
-    st.rerun()
