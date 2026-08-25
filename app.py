@@ -46,9 +46,9 @@ if "attendance_logs" not in st.session_state:
   )
 
 if "logged_in" not in st.session_state:
-  st.session_state.logged_in = True
+  st.session_state.logged_in = False
 
-# Custom CSS Styling for Sidebar, Metrics, and UI Polish
+# Custom CSS Styling for Sidebar, Login Form & UI Polish
 st.markdown(
     """
     <style>
@@ -67,6 +67,12 @@ st.markdown(
         border-radius: 12px;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
+    .stTextInput input {
+        background-color: #161b22;
+        color: white;
+        border: 1px solid #30363d;
+        border-radius: 8px;
+    }
     .stButton>button {
         background: linear-gradient(135deg, #4f46e5 0%, #3b82f6 100%);
         color: white;
@@ -74,6 +80,7 @@ st.markdown(
         padding: 0.5rem 1rem;
         font-weight: 600;
         border: none;
+        width: 100%;
     }
     .stButton>button:hover {
         opacity: 0.9;
@@ -83,7 +90,41 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-# Sidebar Navigation
+# ----------------- AUTHENTICATION & LOGIN GATE -----------------
+if not st.session_state.logged_in:
+  st.markdown("<br><br>", unsafe_allow_html=True)
+  col1, col2, col3 = st.columns([1, 1.2, 1])
+
+  with col2:
+    st.markdown(
+        "<h1 style='text-align: center;'>⚡ AttendX AI</h1>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<p style='text-align: center; color: #8b949e;'>Next-Gen Real-Time"
+        " Facial Recognition Attendance System</p>",
+        unsafe_allow_html=True,
+    )
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    with st.form("login_form"):
+      st.markdown("### 🔒 Teacher Portal Login")
+      username_input = st.text_input("Teacher Username", value="")
+      password_input = st.text_input("Password", type="password", value="")
+      st.markdown("<br>", unsafe_allow_html=True)
+      submit_login = st.form_submit_button("Login as Teacher")
+
+      if submit_login:
+        if username_input == "sarah" and password_input == "admin123":
+          st.session_state.logged_in = True
+          st.success("Logged in successfully!")
+          st.rerun()
+        else:
+          st.error("Invalid credentials (try: sarah / admin123)")
+
+  st.stop()  # Halt execution until authenticated
+
+# ----------------- MAIN APP SIDEBAR -----------------
 st.sidebar.markdown("## ⚡ AttendX Portal")
 st.sidebar.markdown("**Role:** Teacher")
 
